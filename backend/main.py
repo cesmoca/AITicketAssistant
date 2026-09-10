@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from components.fake_task_processor import FakeTaskProcessor
+from .components.fake_task_processor import FakeTaskProcessor
 from pydantic import BaseModel
 
 app = FastAPI(title="AI Ticket Assistant API")

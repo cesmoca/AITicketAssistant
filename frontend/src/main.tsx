@@ -41,7 +41,11 @@ function App() {
     <div>
       <h1>{text}</h1>
       <button onClick={handleClick}>Enviar Aviso</button>
-      <h1>{result}</h1>
+      <p></p>
+      <textarea
+      value={result}
+      onChange={(event) => setResult(event.target.value)}
+      />
     </div>
   </main>;
 }
