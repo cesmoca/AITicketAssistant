@@ -32,7 +32,7 @@ function App() {
 
   async function handleClick() {
     const result = await processTask(text);
-    setResult(result);
+    setResult(JSON.stringify(result));
   };
 
   return <main>
