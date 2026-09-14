@@ -28,7 +28,9 @@ instructions = ("Haz como si fueras un asistente para un reparador"
                "que no ayudan a la resolución, ignóralos. Sin embargo,"
                "no olvides extraer información sobre urgencia, cuánto"
                "tiempo hace de la avería, o cuándo y hasta cuándo estarán"
-               "en casa."
+               "en casa. Identifica también el tipo de mensaje, si es"
+               "uno nuevo, actualización de datos, cancelación. Si no está"
+               "claro qué tipo es, usa el tipo undetermined"
 )
 
 #taskProcessor =  FakeTaskProcessor()
