@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { useState } from "react";
 import "./styles.css";
 
-async function processTask() {
+async function processTask(text: String) {
   const response = await fetch(
     "http://localhost:8000/processTask",
     {
@@ -12,7 +12,7 @@ async function processTask() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        text: "Hola!"
+        text: text
       })
     }
   );
@@ -31,7 +31,7 @@ function App() {
   const [result, setResult] = useState("");
 
   async function handleClick() {
-    const result = await processTask();
+    const result = await processTask(text);
     setResult(result);
   };
 
@@ -39,12 +39,18 @@ function App() {
     <h1>AI Ticket Assistant</h1>
     <p>Frontend ready.</p>
     <div>
-      <h1>{text}</h1>
       <button onClick={handleClick}>Enviar Aviso</button>
       <p></p>
+      <h4>Envio</h4>
+      <textarea
+      value={text}
+      onChange={(event) => setText(event.target.value)}
+      />
+      <h4>Respuesta</h4>
+
       <textarea
       value={result}
-      onChange={(event) => setResult(event.target.value)}
+      contentEditable="false"
       />
     </div>
   </main>;
