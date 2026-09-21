@@ -1,9 +1,10 @@
 from pydantic import BaseModel
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .components.fake_task_processor import FakeTaskProcessor
-from .components.openai_task_processor import OpenAITaskProcessor
-from .components.task import Task
+from .processors.fake_task_processor import FakeTaskProcessor
+from .processors.openai_task_processor import OpenAITaskProcessor
+from .domain.task import Task
+from .constants import SYSTEM_PROMPT
 
 # Frontend: cd frontend && npm run dev
 # Backend: uvicorn backend.main:app --reload (desde directorio root)
@@ -18,23 +19,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-instructions = ("Haz como si fueras un asistente para un reparador"
-               "de electrodomesticos y necesitas sacar la informacion"
-               "clave de los avisos de reparacion a partir de la"
-               "llamada de un cliente. Extrae solo la información"
-               "que esté explícitamente en el texto, si no, devuelve"
-               "null. Además pon sólo información relevante para la"
-               "resolución de la avería. Si el cliente añade datos"
-               "que no ayudan a la resolución, ignóralos. Sin embargo,"
-               "no olvides extraer información sobre urgencia, cuánto"
-               "tiempo hace de la avería, o cuándo y hasta cuándo estarán"
-               "en casa. Identifica también el tipo de mensaje, si es"
-               "uno nuevo, actualización de datos, cancelación. Si no está"
-               "claro qué tipo es, usa el tipo undetermined"
-)
-
 #taskProcessor =  FakeTaskProcessor()
-taskProcessor =  OpenAITaskProcessor(model="gpt-5.6-luna", instructions=instructions)
+taskProcessor =  OpenAITaskProcessor(model="gpt-5.6-luna", instructions=SYSTEM_PROMPT)
 
 # Requests
 class ProcessTaskRequest(BaseModel):

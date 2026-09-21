@@ -4,5 +4,6 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python.terminal.useEnvFile": true
+    "python.terminal.useEnvFile": true,
+    "files.autoSave": "afterDelay"
 }

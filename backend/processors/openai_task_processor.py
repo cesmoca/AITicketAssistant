@@ -1,9 +1,12 @@
 from openai import OpenAI
 from .task_processor import TaskProcessor
-from .task import Task
+from ..domain.task import Task
+from ..repositories.sqlalquemy_task_repository import SQLAlchemyTaskRepository
+
 class OpenAITaskProcessor(TaskProcessor):
     
     previous_id = None
+    task_repository = SQLAlchemyTaskRepository()
     
     def __init__(self, instructions: str, model: str):
         self.model = model

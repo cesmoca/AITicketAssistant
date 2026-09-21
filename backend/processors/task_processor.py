@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from .task import Task
+from ..domain.task import Task
 
 class TaskProcessor(ABC):
     
