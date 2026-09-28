@@ -1,3 +1,4 @@
+from pprint import pprint
 from .task_processor import TaskProcessor
 
 class AITaskProcessor(TaskProcessor):
@@ -9,8 +10,15 @@ class AITaskProcessor(TaskProcessor):
     def process_task(self, input: str) -> Task:
         task = self.task_ai.request_ai(input)
         
-        # TODO here goes the persistance logic
+        if task.task_type == "new":
+            self.repository.create(task)
+            pprint("Created a new task")
+        else:
+            pprint(f"Undetermined database action for task type: {task.task_type}")
         
+        pprint("Listing!!")
+        pprint(self.repository.list())
+            
         return task
         
     
