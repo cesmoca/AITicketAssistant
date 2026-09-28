@@ -23,7 +23,6 @@ class SQLAlchemyTaskRepository(TaskRepository):
             session.commit()
 
             session.refresh(entity)
-            
 
             return TaskMapper.to_domain(entity)
             
@@ -65,3 +64,19 @@ class SQLAlchemyTaskRepository(TaskRepository):
         with self.database.SessionLocal() as session:
             entities_list = session.scalars(statement=statement).all()
             return [TaskMapper.to_domain(entity) for entity in entities_list]
+        
+    def delete(self, task_id) -> Boolean:
+        
+        if task_id is None:
+            raise ValueError("Delete should have a valid task_id")
+        
+        with self.database.SessionLocal() as session:
+            task = session.get(TaskEntity, task_id)
+            
+            if task is None:
+                return False
+            
+            session.delete(task)
+            session.commit()
+            
+            return True
