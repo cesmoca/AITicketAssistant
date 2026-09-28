@@ -1,13 +1,14 @@
 from enum import StrEnum
 from ..domain.task import Task, TaskType
-from task_entity import TaskEntity
+from .task_entity import TaskEntity
 
 
 class TaskMapper:
     
-    def to_entity(self, task: Task) -> TaskEntity:
+    @staticmethod
+    def to_entity(task: Task) -> TaskEntity:
         return TaskEntity(
-        id = task.id,
+        task_id = task.task_id,
         name = task.name,
         appliance = task.appliance,
         address = task.address,
@@ -15,12 +16,21 @@ class TaskMapper:
         task_type = task.task_type.value,
         )
     
-    def to_domain(self, entity: TaskEntity) -> Task:
+    @staticmethod
+    def to_domain(entity: TaskEntity) -> Task:
         return Task(
-        id = entity.id,
+        task_id = entity.task_id,
         name = entity.name,
         appliance = entity.appliance,
         address = entity.address,
         failure = entity.failure,
         task_type = TaskType(entity.task_type)
         )
+        
+    @staticmethod
+    def update_entity(entity: TaskEntity, task: Task) -> None:
+        entity.name = task.name
+        entity.appliance = task.appliance
+        entity.address = task.address
+        entity.failure = task.failure
+        entity.task_type = task.task_type.value

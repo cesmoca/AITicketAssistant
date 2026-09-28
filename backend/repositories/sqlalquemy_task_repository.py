@@ -1,19 +1,67 @@
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.sql import select
 from .task_repository import TaskRepository
-
-class SQLAlchemyBase(DeclarativeBase):
-    pass
+from ..persistence.database import Database
+from ..persistence.task_entity import TaskEntity 
+from ..persistence.task_mapper import TaskMapper
 
 class SQLAlchemyTaskRepository(TaskRepository):
-
+        
+    def __init__(self, database: Database):
+        self.database = database
+        
     def create(self, task: Task) -> Task:
-        pass
-    
-    def update(self, task: Task):
-        pass
 
-    def get(self, id: int) -> Task | None:
-        pass
+        if task.task_id is not None:
+            raise ValueError("Cannot create a Task that already has an ID")
+        
 
-    def list_tasks(self, type: Task.taskType | None) -> list(Task):
-        pass
+        with self.database.SessionLocal() as session:
+
+            entity = TaskMapper.to_entity(task)
+            
+            session.add(entity)
+            session.commit()
+
+            session.refresh(entity)
+            
+
+            return TaskMapper.to_domain(entity)
+            
+
+    def get(self, task_id: int) -> Task | None:
+        statement = select(TaskEntity).where(TaskEntity.task_id == task_id)
+        
+        with self.database.SessionLocal() as session:
+            entity = session.scalar(statement)
+            
+            if entity is None:
+                return None
+
+            return TaskMapper.to_domain(entity)
+            
+            
+    def update(self, task: Task) -> Task:
+        if task.task_id is None:
+            raise ValueError("The task should have an id")
+        
+        statement = select(TaskEntity).where(TaskEntity.task_id == task.task_id)
+        
+        with self.database.SessionLocal() as session:
+            old_entity = session.scalar(statement)
+            if old_entity is None:
+                raise ValueError(f"Could not find a Task with id {task.task_id}")
+            
+            TaskMapper.update_entity(old_entity, task)
+            session.commit()
+            session.refresh(old_entity)
+            
+            return TaskMapper.to_domain(old_entity)
+            
+
+
+    def list(self) -> list[Task]:
+        statement = select(TaskEntity)
+        
+        with self.database.SessionLocal() as session:
+            entities_list = session.scalars(statement=statement).all()
+            return [TaskMapper.to_domain(entity) for entity in entities_list]

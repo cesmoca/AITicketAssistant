@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .processors.fake_task_processor import FakeTaskProcessor
 from .processors.openai_task_processor import OpenAITaskProcessor
 from .domain.task import Task
 from .constants import SYSTEM_PROMPT
@@ -19,7 +18,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#taskProcessor =  FakeTaskProcessor()
 taskProcessor =  OpenAITaskProcessor(model="gpt-5.6-luna", instructions=SYSTEM_PROMPT)
 
 # Requests

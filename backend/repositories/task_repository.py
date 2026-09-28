@@ -16,5 +16,5 @@ class TaskRepository(ABC):
         pass
 
     @abstractmethod
-    def list_tasks(self, type: Task.task_type | None) -> list(Task):
+    def list(self) -> list(Task):
         pass

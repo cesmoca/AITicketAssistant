@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 from backend.main import app
-from backend.components.fake_task_processor import FakeTaskProcessor
+from backend.tests.fakes.fake_task_processor import FakeTaskProcessor
 
 client = TestClient(app)
 
