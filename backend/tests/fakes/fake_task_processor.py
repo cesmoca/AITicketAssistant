@@ -1,6 +1,15 @@
 from backend.processors.task_processor import TaskProcessor
+from backend.domain.task import Task, TaskType
 class FakeTaskProcessor(TaskProcessor):
     
     def process_task(self, input: str) -> Task:
-        result = input
-        return f"FAKE: {input}"
+        task = Task(
+            task_id=1,
+            name="Pedro",
+            appliance="Antena",
+            address="Calle agua",
+            failure=f"FAKE: {input}",
+            task_type=TaskType.NEW  
+        )
+        
+        return task

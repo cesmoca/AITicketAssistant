@@ -1,8 +1,11 @@
 from pydantic import BaseModel
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .processors.openai_task_processor import OpenAITaskProcessor
-from .domain.task import Task
+from .remote.openai_task_ai import OpenAITaskAI
+from .repositories.sqlalquemy_task_repository import SQLAlchemyTaskRepository
+from .persistence.sqlite_database import SQLiteDatabase
+from .processors.ai_task_processor import AITaskProcessor 
+from .domain.task import Task, TaskType
 from .constants import SYSTEM_PROMPT
 
 # Frontend: cd frontend && npm run dev
@@ -18,7 +21,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-taskProcessor =  OpenAITaskProcessor(model="gpt-5.6-luna", instructions=SYSTEM_PROMPT)
+database = SQLiteDatabase()
+repository = SQLAlchemyTaskRepository(session_factory=database.SessionLocal)
+task_ai = OpenAITaskAI(database=database, model="gpt-5.6-luna", instructions=SYSTEM_PROMPT)
+
+app.task_processor =  AITaskProcessor(repository, task_ai)
 
 # Requests
 class ProcessTaskRequest(BaseModel):
@@ -30,6 +37,6 @@ def health() -> dict[str, str]:
 
 @app.post("/processTask")
 def process_task(request: ProcessTaskRequest) -> dict[str, Task]:
-    result = taskProcessor.process_task(request.text)
-    print(result)
-    return { "result": result }
+    task = app.task_processor.process_task(request.text)
+    print(task)
+    return { "result": task }
