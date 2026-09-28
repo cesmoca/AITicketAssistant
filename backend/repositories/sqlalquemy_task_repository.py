@@ -6,8 +6,8 @@ from ..persistence.task_mapper import TaskMapper
 
 class SQLAlchemyTaskRepository(TaskRepository):
         
-    def __init__(self, database: Database):
-        self.database = database
+    def __init__(self, session_factory):
+        self.session_factory = session_factory
         
     def create(self, task: Task) -> Task:
 
@@ -15,7 +15,7 @@ class SQLAlchemyTaskRepository(TaskRepository):
             raise ValueError("Cannot create a Task that already has an ID")
         
 
-        with self.database.SessionLocal() as session:
+        with self.session_factory() as session:
 
             entity = TaskMapper.to_entity(task)
             
@@ -30,14 +30,14 @@ class SQLAlchemyTaskRepository(TaskRepository):
     def get(self, task_id: int) -> Task | None:
         statement = select(TaskEntity).where(TaskEntity.task_id == task_id)
         
-        with self.database.SessionLocal() as session:
+        with self.session_factory() as session:
             entity = session.scalar(statement)
             
             if entity is None:
                 return None
 
             return TaskMapper.to_domain(entity)
-            
+        
             
     def update(self, task: Task) -> Task:
         if task.task_id is None:
@@ -45,7 +45,7 @@ class SQLAlchemyTaskRepository(TaskRepository):
         
         statement = select(TaskEntity).where(TaskEntity.task_id == task.task_id)
         
-        with self.database.SessionLocal() as session:
+        with self.session_factory() as session:
             old_entity = session.scalar(statement)
             if old_entity is None:
                 raise ValueError(f"Could not find a Task with id {task.task_id}")
@@ -61,7 +61,7 @@ class SQLAlchemyTaskRepository(TaskRepository):
     def list(self) -> list[Task]:
         statement = select(TaskEntity)
         
-        with self.database.SessionLocal() as session:
+        with self.session_factory() as session:
             entities_list = session.scalars(statement=statement).all()
             return [TaskMapper.to_domain(entity) for entity in entities_list]
         
@@ -70,7 +70,7 @@ class SQLAlchemyTaskRepository(TaskRepository):
         if task_id is None:
             raise ValueError("Delete should have a valid task_id")
         
-        with self.database.SessionLocal() as session:
+        with self.session_factory() as session:
             task = session.get(TaskEntity, task_id)
             
             if task is None:

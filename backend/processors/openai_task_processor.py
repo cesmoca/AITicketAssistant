@@ -8,7 +8,7 @@ class OpenAITaskProcessor(TaskProcessor):
     
     previous_id = None
     database = SQLiteDatabase()
-    task_repository = SQLAlchemyTaskRepository(database)
+    task_repository = SQLAlchemyTaskRepository(database.SessionLocal)
     
     def __init__(self, instructions: str, model: str):
         self.model = model
