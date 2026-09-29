@@ -13,6 +13,12 @@ class AITaskProcessor(TaskProcessor):
         if task.task_type == "new":
             self.repository.create(task)
             pprint("Created a new task")
+            
+        elif task.task_type == "update":
+            pass
+        
+        elif task.task_type == "cancel":
+            pass
         else:
             pprint(f"Undetermined database action for task type: {task.task_type}")
         
