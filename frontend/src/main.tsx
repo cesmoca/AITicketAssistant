@@ -25,44 +25,48 @@ async function processTask(text: String) {
   return data.result;
 }
 
-const tickets = [
-  {
-    date: "2026-09-29",
-    name: "María López",
-    appliance: "Washing machine",
-    address: "Calle Mayor 12",
-    failure: "Does not start",
-    status: "Pending",
-    statusClass: "status-badge"
-  },
-  {
-    date: "2026-09-28",
-    name: "Carlos García",
-    appliance: "Oven",
-    address: "Avenida del Sol 8",
-    failure: "Not heating",
-    status: "In progress",
-    statusClass: "status-badge status-badge--muted"
-  },
-  {
-    date: "2026-09-27",
-    name: "Ana Martín",
-    appliance: "Refrigerator",
-    address: "Plaza España 4",
-    failure: "Leaking water",
-    status: "Completed",
-    statusClass: "status-badge status-badge--muted"
+async function listTickets(): Promise<Ticket[]> {
+  const response = await fetch(
+    "http://localhost:8000/ticketsList",
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error obteniendo los tickets");
   }
-];
+
+  const data: { list: Ticket[] } = await response.json();
+  return data.list;
+}
+
+interface Ticket {
+  task_id: number | null;
+  name: string | null;
+  appliance: string | null;
+  address: string | null;
+  failure: string | null;
+  task_type: string;
+}
 
 function App() {
 
   const [text, setText] = useState("");
   const [result, setResult] = useState("");
+  const [ticketsList, setTicketsList] = useState<Ticket[]>([]);
 
-  async function handleClick() {
+  async function handleSendClick() {
     const result = await processTask(text);
     setResult(JSON.stringify(result));
+  };
+
+  async function handleRefreshClick() {
+    const tickets = await listTickets();
+    setTicketsList(tickets);
   };
 
   return <main>
@@ -102,7 +106,7 @@ function App() {
         </label>
       </div>
       <div className="action-row">
-        <button className="primary-button" onClick={handleClick} type="button">Send</button>
+        <button className="primary-button" onClick={handleSendClick} type="button">Send</button>
       </div>
     </section>
 
@@ -112,7 +116,7 @@ function App() {
           <p className="eyebrow">Ticket queue</p>
           <h2 id="tickets-title">Tickets</h2>
         </div>
-        <button className="secondary-button" type="button">Refresh</button>
+        <button className="secondary-button" onClick={handleRefreshClick} type="button">Refresh</button>
       </div>
 
       <div className="ticket-table" role="table" aria-label="Ticket rows">
@@ -124,16 +128,16 @@ function App() {
           <span role="columnheader">Failure</span>
           <span role="columnheader">Status</span>
         </div>
-        {[...tickets]
-          .sort((first, second) => second.date.localeCompare(first.date))
-          .map((ticket) => (
-            <div className="ticket-row" role="row" key={`${ticket.date}-${ticket.name}`}>
-              <span role="cell" data-label="Date">{ticket.date.split("-").reverse().join("/")}</span>
-              <span role="cell" data-label="Name">{ticket.name}</span>
-              <span role="cell" data-label="Appliance">{ticket.appliance}</span>
-              <span role="cell" data-label="Address">{ticket.address}</span>
-              <span role="cell" data-label="Failure">{ticket.failure}</span>
-              <span role="cell" data-label="Status"><span className={ticket.statusClass}>{ticket.status}</span></span>
+        {ticketsList.map((ticket) => (
+            <div className="ticket-row" role="row" key={ticket.task_id ?? `${ticket.name}-${ticket.appliance}`}>
+              <span role="cell" data-label="Date">—</span>
+              <span role="cell" data-label="Name">{ticket.name ?? "—"}</span>
+              <span role="cell" data-label="Appliance">{ticket.appliance ?? "—"}</span>
+              <span role="cell" data-label="Address">{ticket.address ?? "—"}</span>
+              <span role="cell" data-label="Failure">{ticket.failure ?? "—"}</span>
+              <span role="cell" data-label="Status">
+                <span className="status-badge status-badge--muted">{ticket.task_type}</span>
+              </span>
             </div>
           ))}
       </div>

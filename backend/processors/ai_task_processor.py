@@ -19,11 +19,9 @@ class AITaskProcessor(TaskProcessor):
         
         elif task.task_type == "cancel":
             pass
+        
         else:
             pprint(f"Undetermined database action for task type: {task.task_type}")
-        
-        pprint("Listing!!")
-        pprint(self.repository.list())
             
         return task
         

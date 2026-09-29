@@ -27,16 +27,22 @@ task_ai = OpenAITaskAI(database=database, model="gpt-5.6-luna", instructions=SYS
 
 app.task_processor =  AITaskProcessor(repository, task_ai)
 
-# Requests
 class ProcessTaskRequest(BaseModel):
     text: str
-
-@app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
-
+    
+# Requests
 @app.post("/processTask")
 def process_task(request: ProcessTaskRequest) -> dict[str, Task]:
     task = app.task_processor.process_task(request.text)
     print(task)
     return { "result": task }
+
+@app.get("/ticketsList")
+def health() -> dict[str, str]:
+    tickets_list = repository.list()
+    return {"list": tickets_list}
+
+
+@app.get("/health")
+def health() -> dict[str, str]:
+    return {"status": "ok"}
