@@ -21,9 +21,19 @@ class AITaskProcessor(TaskProcessor):
             if len(candidates) == 1:
                 self._updateTask(task, candidates[0])
                 self.repository.update(task)
+            else:
+                print("Resolution required")
                 
         elif task.task_type == "cancel":
             candidates = self.repository.searchTask(task)
+            
+            candidates = self.repository.searchTask(task)
+            
+            if len(candidates) == 1:
+                self.repository.delete(candidates[0].task_id)
+            else:
+                print("Resolution required")
+                
         else:
             pprint(f"Undetermined database action for task type: {task.task_type}")
             
