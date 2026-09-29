@@ -1,10 +1,9 @@
-from pydantic import BaseModel
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .remote.openai_task_ai import OpenAITaskAI
 from .repositories.sqlalquemy_task_repository import SQLAlchemyTaskRepository
 from .persistence.sqlite_database import SQLiteDatabase
-from .processors.ai_task_processor import AITaskProcessor 
+from .processors.ai_task_processor import AITaskProcessor, ProcessTaskRequest, ProcessTaskResult
 from .domain.task import Task, TaskType
 from .constants import SYSTEM_PROMPT
 
@@ -27,15 +26,11 @@ task_ai = OpenAITaskAI(database=database, model="gpt-5.6-luna", instructions=SYS
 
 app.task_processor =  AITaskProcessor(repository, task_ai)
 
-class ProcessTaskRequest(BaseModel):
-    text: str
-    
 # Requests
 @app.post("/processTask")
-def process_task(request: ProcessTaskRequest) -> dict[str, Task]:
-    task = app.task_processor.process_task(request.text)
-    print(task)
-    return { "result": task }
+def process_task(request: ProcessTaskRequest) -> ProcessTaskResult:
+    result = app.task_processor.process_task(request.text)
+    return result
 
 @app.get("/ticketsList")
 def health() -> dict[str, list[Task]]:

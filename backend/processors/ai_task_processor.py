@@ -1,14 +1,23 @@
+from pydantic import BaseModel
 from pprint import pprint
 from .task_processor import TaskProcessor
 from ..domain.task import Task, TaskType
 
+class ProcessTaskRequest(BaseModel):
+    text: str
+    
+class ProcessTaskResult(BaseModel):
+    status: str
+    result: Task | None
+
+    
 class AITaskProcessor(TaskProcessor):
     
     def __init__(self, repository, task_ai):
         self.repository = repository 
         self.task_ai = task_ai
     
-    def process_task(self, input: str) -> Task:
+    def process_task(self, input: str) -> ProcessTaskResult:
         task = self.task_ai.request_ai(input)
         pprint(task)
         
@@ -22,7 +31,8 @@ class AITaskProcessor(TaskProcessor):
                 self._updateTask(task, candidates[0])
                 self.repository.update(task)
             else:
-                print("Resolution required")
+                return ProcessTaskResult(status="resolution_required", result=None)
+
                 
         elif task.task_type == "cancel":
             candidates = self.repository.searchTask(task)
@@ -32,12 +42,12 @@ class AITaskProcessor(TaskProcessor):
             if len(candidates) == 1:
                 self.repository.delete(candidates[0].task_id)
             else:
-                print("Resolution required")
+                return ProcessTaskResult(status="resolution_required", result=None)
                 
         else:
             pprint(f"Undetermined database action for task type: {task.task_type}")
             
-        return task
+        return ProcessTaskResult(status="ok", result=task)
     
     def _updateTask(self, toTask: Task, fromTask: Task):
         

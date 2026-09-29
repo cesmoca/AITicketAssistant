@@ -3,7 +3,23 @@ import { createRoot } from "react-dom/client";
 import { useState } from "react";
 import "./styles.css";
 
-async function processTask(text: String) {
+interface Task {
+  task_id: number | null;
+  name: string | null;
+  appliance: string | null;
+  address: string | null;
+  failure: string | null;
+  task_type: string;
+}
+
+type Ticket = Task;
+
+interface ProcessTaskResult {
+  status: string;
+  result: Task | null;
+}
+
+async function processTask(text: string): Promise<ProcessTaskResult> {
   const response = await fetch(
     "http://localhost:8000/processTask",
     {
@@ -21,8 +37,8 @@ async function processTask(text: String) {
     throw new Error("Error procesando la tarea");
   }
 
-  const data = await response.json();
-  return data.result;
+  const data: ProcessTaskResult = await response.json();
+  return data;
 }
 
 async function listTickets(): Promise<Ticket[]> {
@@ -44,15 +60,6 @@ async function listTickets(): Promise<Ticket[]> {
   return data.list;
 }
 
-interface Ticket {
-  task_id: number | null;
-  name: string | null;
-  appliance: string | null;
-  address: string | null;
-  failure: string | null;
-  task_type: string;
-}
-
 function App() {
 
   const [text, setText] = useState("");
@@ -60,8 +67,16 @@ function App() {
   const [ticketsList, setTicketsList] = useState<Ticket[]>([]);
 
   async function handleSendClick() {
-    const result = await processTask(text);
-    setResult(JSON.stringify(result));
+    const response = await processTask(text);
+
+    if (response.status === "ok") {
+      setResult(response.result === null ? "—" : JSON.stringify(response.result, null, 2));
+      return;
+    }
+
+    if (response.status === "resolution_required") {
+      setResult(response.status);
+    }
   };
 
   async function handleRefreshClick() {
