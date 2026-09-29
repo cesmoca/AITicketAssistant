@@ -34,6 +34,7 @@ def repository():
         appliance="Appliance",
         address="Address",
         failure="Failure",
+        other_details="Other details",
         task_type = TaskType.NEW
     )
     
@@ -50,6 +51,7 @@ def task():
         appliance="Appliance",
         address="Address",
         failure="Failure",
+        other_details="Other details",
         task_type = TaskType.NEW
     )
     
@@ -60,7 +62,7 @@ def test_create(repository, task):
     repository.create(task)
     
     with repository.session_factory() as session:
-        entity = session.get(TaskEntity, 1)
+        entity: TaskEntity = session.get(TaskEntity, 1)
         
     assert entity is not None    
     assert entity.task_id == 1
@@ -68,6 +70,7 @@ def test_create(repository, task):
     assert entity.appliance == task.appliance
     assert entity.address == task.address
     assert entity.failure == task.failure
+    assert entity.other_details == task.other_details
     assert entity.task_type == task.task_type
 
     
@@ -79,7 +82,7 @@ def test_get_existing(repository, task):
         session.add(TaskMapper.to_entity(task))
         session.commit();
         
-    get_task = repository.get(task.task_id)
+    get_task: Task = repository.get(task.task_id)
     
     assert get_task is not None
     assert get_task.task_id == task.task_id
@@ -87,6 +90,7 @@ def test_get_existing(repository, task):
     assert get_task.appliance == task.appliance
     assert get_task.address == task.address
     assert get_task.failure == task.failure
+    assert get_task.other_details == task.other_details
     assert get_task.task_type == task.task_type
     
 def test_get_missing(repository, task):

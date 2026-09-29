@@ -9,6 +9,7 @@ interface Task {
   appliance: string | null;
   address: string | null;
   failure: string | null;
+  other_details: string | null;
   task_type: string;
 }
 
@@ -156,6 +157,7 @@ function App() {
           <span role="columnheader">Appliance</span>
           <span role="columnheader">Address</span>
           <span role="columnheader">Failure</span>
+          <span role="columnheader">Other Details</span>
           <span role="columnheader">Status</span>
         </div>
         {ticketsList.map((ticket) => (
@@ -165,6 +167,7 @@ function App() {
               <span role="cell" data-label="Appliance">{ticket.appliance ?? "—"}</span>
               <span role="cell" data-label="Address">{ticket.address ?? "—"}</span>
               <span role="cell" data-label="Failure">{ticket.failure ?? "—"}</span>
+              <span role="cell" data-label="Other Details">{ticket.other_details ?? "—"}</span>
               <span role="cell" data-label="Status">
                 <span className="status-badge status-badge--muted">{ticket.task_type}</span>
               </span>

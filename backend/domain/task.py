@@ -13,4 +13,5 @@ class Task(BaseModel):
     appliance: str | None
     address: str | None
     failure: str | None
+    other_details: str|None
     task_type: TaskType

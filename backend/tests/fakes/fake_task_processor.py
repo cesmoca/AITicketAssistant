@@ -10,6 +10,7 @@ class FakeTaskProcessor(TaskProcessor):
             appliance="Antena",
             address="Calle agua",
             failure=f"FAKE: {input}",
+            other_details="Tiene prisa",            
             task_type=TaskType.NEW  
         )
         

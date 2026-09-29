@@ -18,5 +18,6 @@ def test_endopoint_process_task():
     assert data["result"]["address"] == "Calle agua"
     assert data["result"]["appliance"] == "Antena"
     assert data["result"]["failure"] == "FAKE: I am fed up!"
+    assert data["result"]["other_details"] == "Tiene prisa"
     assert data["result"]["task_type"] == "new"
 

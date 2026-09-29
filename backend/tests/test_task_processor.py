@@ -1,9 +1,9 @@
 import pytest
 
-from backend.processors.ai_task_processor import AITaskProcessor, ProcessTaskResult
 from backend.domain.task import Task, TaskType
-from backend.tests.fakes.fake_task_repository import FakeTaskRepository
+from backend.processors.ai_task_processor import AITaskProcessor, ProcessTaskResult
 from backend.tests.fakes.fake_task_ai import FakeTaskAI
+from backend.tests.fakes.fake_task_repository import FakeTaskRepository
 
 
 @pytest.fixture
@@ -26,12 +26,13 @@ def test_process_task(processor: AITaskProcessor, task_ai, repository) -> Proces
         appliance="Appliance",
         address="Address",
         failure="Failure",
+        other_details="Other details",
         task_type = TaskType.NEW
     )
     
     result = processor.process_task("Some ticket")
     
-    assert result.task is not None
-    assert result.task.name == result.task_ai.test_task.name
+    assert result.result is not None
+    assert result.result.name == task_ai.test_task.name
     
     

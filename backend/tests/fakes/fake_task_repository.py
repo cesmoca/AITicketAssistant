@@ -18,6 +18,9 @@ class FakeTaskRepository(TaskRepository):
     def list(self) -> list[Task]:
         pass
         
+    def searchTask(self) -> list(Task):
+        pass
+   
     def delete(self, task_id) -> Boolean:
         pass
         

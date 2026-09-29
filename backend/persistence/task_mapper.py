@@ -13,6 +13,7 @@ class TaskMapper:
         appliance = task.appliance,
         address = task.address,
         failure = task.failure,
+        other_details = task.other_details,
         task_type = task.task_type.value,
         )
     
@@ -24,6 +25,7 @@ class TaskMapper:
         appliance = entity.appliance,
         address = entity.address,
         failure = entity.failure,
+        other_details = entity.other_details,
         task_type = TaskType(entity.task_type)
         )
         
@@ -33,4 +35,5 @@ class TaskMapper:
         entity.appliance = task.appliance
         entity.address = task.address
         entity.failure = task.failure
+        entity.other_details = task.other_details
         entity.task_type = task.task_type.value
