@@ -20,6 +20,10 @@ class TaskRepository(ABC):
         pass
     
     @abstractmethod
+    def searchTask(self) -> list(Task):
+        pass
+    
+    @abstractmethod
     def delete(self, task_id) -> Boolean:
         pass
     

@@ -1,5 +1,6 @@
 from sqlalchemy.sql import select, delete
 from .task_repository import TaskRepository
+from ..domain.task import Task
 from ..persistence.database import Database
 from ..persistence.task_entity import TaskEntity 
 from ..persistence.task_mapper import TaskMapper
@@ -65,6 +66,12 @@ class SQLAlchemyTaskRepository(TaskRepository):
             entities_list = session.scalars(statement=statement).all()
             return [TaskMapper.to_domain(entity) for entity in entities_list]
         
+        
+    def searchTask(self, task) -> list(Task):
+        all_tasks: list[Task] = self.list()
+        candidate_tasks = [candidate_task for candidate_task in all_tasks if self._areTasksSimilar(task, candidate_task)]
+        return candidate_tasks
+    
     def delete(self, task_id) -> Boolean:
         
         if task_id is None:
@@ -86,3 +93,11 @@ class SQLAlchemyTaskRepository(TaskRepository):
             session.execute(delete(TaskEntity))
             session.commit()
         
+    def _areTasksSimilar(self, task1: Task, task2: Task) -> list[Task]:
+        if task1.name.strip().lower() == task2.name.strip().lower():
+            return True
+        
+        if task1.address.strip().lower() == task2.address.strip().lower():
+            return True
+        
+        return False
