@@ -1,11 +1,11 @@
 
 class Case:
-    input
-    expected_name
-    expected_address
-    expected_appliance
-    expected_failure
-    expected_type
+    input=""
+    expected_name=""
+    expected_address=""
+    expected_appliance=""
+    expected_failure=""
+    expected_type=""
     
     
 

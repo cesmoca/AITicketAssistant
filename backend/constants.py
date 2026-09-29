@@ -1,3 +1,5 @@
+MODEL="gpt-5.6-luna"
+
 SYSTEM_PROMPT = ("Haz como si fueras un asistente para un reparador"
                "de electrodomesticos y necesitas sacar la informacion"
                "clave de los avisos de reparacion a partir de la"

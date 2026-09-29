@@ -5,7 +5,7 @@ from .repositories.sqlalquemy_task_repository import SQLAlchemyTaskRepository
 from .persistence.sqlite_database import SQLiteDatabase
 from .processors.ai_task_processor import AITaskProcessor, ProcessTaskRequest, ProcessTaskResult
 from .domain.task import Task, TaskType
-from .constants import SYSTEM_PROMPT
+from .constants import SYSTEM_PROMPT, MODEL
 
 # Frontend: cd frontend && npm run dev
 # Backend: uvicorn backend.main:app --reload (desde directorio root)
@@ -19,10 +19,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+      
 database = SQLiteDatabase()
+database.create_tables()
 repository = SQLAlchemyTaskRepository(session_factory=database.SessionLocal)
-task_ai = OpenAITaskAI(database=database, model="gpt-5.6-luna", instructions=SYSTEM_PROMPT)
+task_ai = OpenAITaskAI(model=MODEL, instructions=SYSTEM_PROMPT)
 
 app.task_processor =  AITaskProcessor(repository, task_ai)
 
