@@ -19,6 +19,8 @@ h2 { font-size: 1.25rem; }
 button { border: 0; border-radius: .6rem; padding: .7rem 1rem; font: inherit; font-weight: 700; cursor: pointer; }
 .primary-button { color: #fff; background: #2563eb; }
 .secondary-button { color: #1d4ed8; border: 1px solid #bfdbfe; background: #eff6ff; }
+.ticket-actions { display: flex; align-items: center; gap: .65rem; }
+.danger-button { color: #b91c1c; border: 1px solid #fecaca; background: #fef2f2; }
 .action-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; margin-top: 1.25rem; }
 .action-row .primary-button { grid-column: 1; justify-self: end; }
 .ticket-table { overflow: hidden; border: 1px solid #e2e8f0; border-radius: .7rem; }
@@ -40,6 +42,7 @@ textarea[readonly] { color: #475569; background: #f8fafc; }
   main { padding: 2rem 1rem 3rem; }
   .panel { padding: 1rem; }
   .panel-heading { align-items: flex-start; }
+  .ticket-actions { flex-wrap: wrap; justify-content: flex-end; }
   .editor-grid { grid-template-columns: 1fr; }
   .action-row { grid-template-columns: 1fr; }
 }

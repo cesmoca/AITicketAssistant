@@ -22,3 +22,7 @@ class TaskRepository(ABC):
     @abstractmethod
     def delete(self, task_id) -> Boolean:
         pass
+    
+    @abstractmethod
+    def clear(self):
+        pass

@@ -1,4 +1,4 @@
-from sqlalchemy.sql import select
+from sqlalchemy.sql import select, delete
 from .task_repository import TaskRepository
 from ..persistence.database import Database
 from ..persistence.task_entity import TaskEntity 
@@ -80,3 +80,9 @@ class SQLAlchemyTaskRepository(TaskRepository):
             session.commit()
             
             return True
+    
+    def clear(self):
+        with self.session_factory() as session:
+            session.execute(delete(TaskEntity))
+            session.commit()
+        

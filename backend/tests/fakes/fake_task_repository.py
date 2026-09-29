@@ -20,3 +20,8 @@ class FakeTaskRepository(TaskRepository):
         
     def delete(self, task_id) -> Boolean:
         pass
+        
+    def clear(self):
+        with self.session_factory() as session:
+            session.execute(delete(TaskEntity))
+            session.commit()

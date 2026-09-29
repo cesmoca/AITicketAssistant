@@ -38,10 +38,14 @@ def process_task(request: ProcessTaskRequest) -> dict[str, Task]:
     return { "result": task }
 
 @app.get("/ticketsList")
-def health() -> dict[str, str]:
+def health() -> dict[str, list[Task]]:
     tickets_list = repository.list()
     return {"list": tickets_list}
 
+@app.delete("/clearTickets")
+def clear_tickets() -> dict[str, str]:
+    repository.clear()
+    return {"status": "ok"}
 
 @app.get("/health")
 def health() -> dict[str, str]:

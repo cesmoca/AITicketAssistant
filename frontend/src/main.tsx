@@ -69,6 +69,18 @@ function App() {
     setTicketsList(tickets);
   };
 
+  async function handleClearDatabaseClick() {
+    const response = await fetch("http://localhost:8000/clearTickets", {
+      method: "DELETE"
+    });
+
+    if (!response.ok) {
+      throw new Error("Error borrando los tickets");
+    }
+
+    setTicketsList([]);
+  }
+
   return <main>
     <header className="page-header">
       <div>
@@ -116,7 +128,10 @@ function App() {
           <p className="eyebrow">Ticket queue</p>
           <h2 id="tickets-title">Tickets</h2>
         </div>
-        <button className="secondary-button" onClick={handleRefreshClick} type="button">Refresh</button>
+        <div className="ticket-actions">
+          <button className="danger-button" onClick={handleClearDatabaseClick} type="button">Clear database</button>
+          <button className="secondary-button" onClick={handleRefreshClick} type="button">Refresh</button>
+        </div>
       </div>
 
       <div className="ticket-table" role="table" aria-label="Ticket rows">
