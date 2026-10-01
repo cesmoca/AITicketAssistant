@@ -24,7 +24,6 @@ def processor(ticket_ai, repository):
 
 def test_process_ticket(processor: AITicketProcessor, ticket_ai, repository):
     ticket_ai.test_ticket = TicketAction(
-        ticket_id=None,
         info=TaskInfo(
             name="Name",
             appliance="Appliance",
@@ -32,7 +31,7 @@ def test_process_ticket(processor: AITicketProcessor, ticket_ai, repository):
             failure="Failure",
             other_details="Other details",
         ),
-        ticket_type = TicketActionType.NEW
+        action_type = TicketActionType.NEW
     )
 
     request = ProcessTicketRequest(text="Some ticket")
@@ -50,8 +49,7 @@ def test_process_ticket(processor: AITicketProcessor, ticket_ai, repository):
 @pytest.mark.parametrize("action_type", [TicketActionType.UPDATE, TicketActionType.CANCEL])
 def test_resolution_required_has_null_data(processor, ticket_ai, action_type):
     ticket_ai.test_ticket = TicketAction(
-        ticket_id=None,
-        ticket_type=action_type,
+        action_type=action_type,
         info=TaskInfo(name=None, appliance=None, address=None, failure=None, other_details=None),
     )
     request = ProcessTicketRequest(text="Ambiguous ticket")

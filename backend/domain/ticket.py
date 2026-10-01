@@ -14,6 +14,6 @@ class TicketStatus(str, Enum):
 
 
 class Ticket(BaseModel):
-    id: int
+    id: int | None
     info: TaskInfo
     status: TicketStatus

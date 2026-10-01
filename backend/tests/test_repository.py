@@ -49,7 +49,7 @@ def ticket():
     yield ticket
         
 def test_create(repository, ticket):
-    
+    ticket.id = None
     repository.create(ticket)
     
     with repository.session_factory() as session:
@@ -152,8 +152,7 @@ def test_search_with_nullable_info(repository, ticket, name, address, expected):
         session.add(TicketMapper.to_entity(ticket))
         session.commit()
     action = TicketAction(
-        ticket_id=None,
-        ticket_type=TicketActionType.UPDATE,
+        action_type=TicketActionType.UPDATE,
         info=TaskInfo(name=name, appliance=None, address=address, failure=None, other_details=None),
     )
     assert repository.searchTicket(action) == ([ticket] if expected else [])
@@ -168,3 +167,20 @@ def test_database_rejects_null_status(repository, ticket):
         session.add(entity)
         with pytest.raises(IntegrityError):
             session.commit()
+
+
+
+def test_create_from_action(repository, ticket):
+    from backend.domain.ticket_action import TicketAction, TicketActionType
+
+    action = TicketAction(info=ticket.info, action_type=TicketActionType.NEW)
+    new_ticket = TicketMapper.to_new_ticket(action)
+
+    assert new_ticket.id is None
+    assert new_ticket.info == action.info
+    assert new_ticket.status == TicketStatus.ACTIVE
+
+    stored = repository.create(new_ticket)
+    assert stored.id == 1
+    assert stored.info == action.info
+    assert stored.status == TicketStatus.ACTIVE
