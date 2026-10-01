@@ -47,10 +47,10 @@ React + TypeScript + Vite
 FastAPI API layer
               │
               ▼
-AI task processor ─── OpenAI Responses API
+AI ticket processor ─── OpenAI Responses API
               │
               ▼
-Task repository interface
+Ticket repository interface
               │
               ▼
 SQLAlchemy ─── SQLite
@@ -59,9 +59,9 @@ SQLAlchemy ─── SQLite
 ### Backend layers
 
 - `backend/main.py` exposes the FastAPI application and HTTP endpoints.
-- `backend/domain/task.py` defines the `Task` domain model and task types.
-- `backend/processors/ai_task_processor.py` coordinates AI extraction and business decisions.
-- `backend/remote/openai_task_ai.py` adapts the OpenAI Responses API to the application’s `TaskAI` interface.
+- `backend/domain/ticket_action.py` defines the `TicketAction` domain model and ticket types.
+- `backend/processors/ai_ticket_processor.py` coordinates AI extraction and business decisions.
+- `backend/remote/openai_ticket_ai.py` adapts the OpenAI Responses API to the application’s `TicketAI` interface.
 - `backend/repositories/` contains the repository contract and SQLAlchemy implementation.
 - `backend/persistence/` contains SQLAlchemy entities, mapping, database setup, and SQLite configuration.
 - `backend/tests/` contains unit tests and test doubles for isolated behavior testing.
@@ -81,20 +81,20 @@ The frontend is a Vite-powered React application written in TypeScript. It provi
 A ticket currently contains:
 
 ```text
-task_id       integer | null
+ticket_id       integer | null
 name          string  | null
 appliance     string  | null
 address       string  | null
 failure       string  | null
 other_details string  | null
-task_type     new | update | cancel | undetermined
+ticket_type     new | update | cancel | undetermined
 ```
 
 The AI instructions constrain extraction to information explicitly present in the customer message. Missing information is represented as `null`, while useful details that do not fit the normalized fields are preserved in `other_details`.
 
 ## API
 
-### `POST /processTask`
+### `POST /processTicket`
 
 Processes a free-form message.
 
@@ -112,13 +112,13 @@ Successful processing returns a typed result:
 {
   "status": "ok",
   "result": {
-    "task_id": 1,
+    "ticket_id": 1,
     "name": "Sebastian",
     "appliance": "Televisión",
     "address": null,
     "failure": "Se ve mal",
     "other_details": null,
-    "task_type": "new"
+    "ticket_type": "new"
   }
 }
 ```
@@ -231,13 +231,13 @@ The repository includes AI extraction cases in `backend/tests/utils/tickets_list
 Run the deterministic processor tests with:
 
 ```powershell
-backend\.venv\Scripts\python.exe -m pytest backend\tests\test_task_processor.py backend\tests\test_main.py
+backend\.venv\Scripts\python.exe -m pytest backend\tests\test_ticket_processor.py backend\tests\test_main.py
 ```
 
 Run the AI extraction evaluation cases with:
 
 ```powershell
-backend\.venv\Scripts\python.exe -m pytest backend\tests\test_ai_task_ai.py -s
+backend\.venv\Scripts\python.exe -m pytest backend\tests\test_ai_ticket_ai.py -s
 ```
 
 The AI evaluation calls the configured OpenAI model, so it requires `OPENAI_API_KEY`, network access, and may incur API usage. The fake-based tests do not require those external resources.
@@ -247,7 +247,7 @@ The AI evaluation calls the configured OpenAI model, so it requires `OPENAI_API_
 Start the backend, then send these four requests from a second terminal. The examples use PowerShell’s `Invoke-RestMethod`; the same JSON can be sent with curl or through the frontend.
 
 ```powershell
-$api = "http://localhost:8000/processTask"
+$api = "http://localhost:8000/processTicket"
 
 # 1. New ticket
 Invoke-RestMethod -Method Post -Uri $api -ContentType "application/json" -Body (@{
@@ -272,9 +272,9 @@ Invoke-RestMethod -Method Post -Uri $api -ContentType "application/json" -Body (
 
 Expected high-level outcomes:
 
-| Case | Expected `task_type` / status | Behavior |
+| Case | Expected `ticket_type` / status | Behavior |
 | --- | --- | --- |
-| New ticket | `new` / `ok` | Extract and persist a new task. |
+| New ticket | `new` / `ok` | Extract and persist a new ticket. |
 | Update | `update` / `ok` or `resolution_required` | Update only when the existing ticket match is unambiguous. |
 | Cancellation | `cancel` / `ok` or `resolution_required` | Delete only when the target ticket match is unambiguous. |
 | Ambiguous message | `undetermined` / `ok` | Preserve the extracted information without inventing an operation. |
@@ -285,7 +285,7 @@ The exact result of update and cancellation depends on the current contents of t
 
 ### Structured AI output
 
-The AI adapter requests a parsed `Task` rather than relying on fragile string parsing. This makes the boundary between probabilistic extraction and deterministic application logic explicit.
+The AI adapter requests a parsed `TicketAction` rather than relying on fragile string parsing. This makes the boundary between probabilistic extraction and deterministic application logic explicit.
 
 ### Safe ambiguity handling
 

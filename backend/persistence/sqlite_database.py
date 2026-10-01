@@ -4,7 +4,7 @@ from ..persistence.database import Database
 from ..persistence.sqlalchemy_base import SQLAlchemyBase
 
 class SQLiteDatabase(Database):
-    DATABASE_URL = "sqlite:///./backend/tasks.db"
+    DATABASE_URL = "sqlite:///./backend/tickets.db"
 
     engine = create_engine(DATABASE_URL)
 

@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .remote.openai_task_ai import OpenAITaskAI
-from .repositories.sqlalquemy_task_repository import SQLAlchemyTaskRepository
+from .remote.openai_ticket_ai import OpenAITicketAI
+from .repositories.sqlalquemy_ticket_repository import SQLAlchemyTicketRepository
 from .persistence.sqlite_database import SQLiteDatabase
-from .processors.ai_task_processor import AITaskProcessor, ProcessTaskRequest, ProcessTaskResult
-from .domain.task_action import TaskAction, TaskActionType
+from .processors.ai_ticket_processor import AITicketProcessor, ProcessTicketRequest, ProcessTicketResult
+from .domain.ticket_action import TicketAction, TicketActionType
 from .constants import SYSTEM_PROMPT, MODEL
 
 # Frontend: cd frontend && npm run dev
@@ -22,19 +22,19 @@ app.add_middleware(
       
 database = SQLiteDatabase()
 database.create_tables()
-repository = SQLAlchemyTaskRepository(session_factory=database.SessionLocal)
-task_ai = OpenAITaskAI(model=MODEL, instructions=SYSTEM_PROMPT)
+repository = SQLAlchemyTicketRepository(session_factory=database.SessionLocal)
+ticket_ai = OpenAITicketAI(model=MODEL, instructions=SYSTEM_PROMPT)
 
-app.task_processor =  AITaskProcessor(repository, task_ai)
+app.ticket_processor =  AITicketProcessor(repository, ticket_ai)
 
 # Requests
-@app.post("/processTask")
-def process_task(request: ProcessTaskRequest) -> ProcessTaskResult:
-    result = app.task_processor.process_task(request.text)
+@app.post("/processTicket")
+def process_ticket(request: ProcessTicketRequest) -> ProcessTicketResult:
+    result = app.ticket_processor.process_ticket(request.text)
     return result
 
 @app.get("/ticketsList")
-def health() -> dict[str, list[TaskAction]]:
+def health() -> dict[str, list[TicketAction]]:
     tickets_list = repository.list()
     return {"list": tickets_list}
 

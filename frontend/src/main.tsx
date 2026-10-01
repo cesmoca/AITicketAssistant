@@ -3,26 +3,24 @@ import { createRoot } from "react-dom/client";
 import { useState } from "react";
 import "./styles.css";
 
-interface Task {
-  task_id: number | null;
+interface Ticket {
+  ticket_id: number | null;
   name: string | null;
   appliance: string | null;
   address: string | null;
   failure: string | null;
   other_details: string | null;
-  task_type: string;
+  ticket_type: string;
 }
 
-type Ticket = Task;
-
-interface ProcessTaskResult {
+interface ProcessTicketResult {
   status: string;
-  result: Task | null;
+  result: Ticket | null;
 }
 
-async function processTask(text: string): Promise<ProcessTaskResult> {
+async function processTicket(text: string): Promise<ProcessTicketResult> {
   const response = await fetch(
-    "http://localhost:8000/processTask",
+    "http://localhost:8000/processTicket",
     {
       method: "POST",
       headers: {
@@ -38,7 +36,7 @@ async function processTask(text: string): Promise<ProcessTaskResult> {
     throw new Error("Error procesando la tarea");
   }
 
-  const data: ProcessTaskResult = await response.json();
+  const data: ProcessTicketResult = await response.json();
   return data;
 }
 
@@ -68,7 +66,7 @@ function App() {
   const [ticketsList, setTicketsList] = useState<Ticket[]>([]);
 
   async function handleSendClick() {
-    const response = await processTask(text);
+    const response = await processTicket(text);
 
     if (response.status === "ok") {
       setResult(response.result === null ? "—" : JSON.stringify(response.result, null, 2));
@@ -102,7 +100,7 @@ function App() {
       <div>
         <p className="eyebrow">Workspace</p>
         <h1>AI Ticket Assistant</h1>
-        <p className="subtitle">Review and process support tasks from one place.</p>
+        <p className="subtitle">Review and process support tickets from one place.</p>
       </div>
     </header>
 
@@ -161,7 +159,7 @@ function App() {
           <span role="columnheader">Status</span>
         </div>
         {ticketsList.map((ticket) => (
-            <div className="ticket-row" role="row" key={ticket.task_id ?? `${ticket.name}-${ticket.appliance}`}>
+            <div className="ticket-row" role="row" key={ticket.ticket_id ?? `${ticket.name}-${ticket.appliance}`}>
               <span role="cell" data-label="Date">—</span>
               <span role="cell" data-label="Name">{ticket.name ?? "—"}</span>
               <span role="cell" data-label="Appliance">{ticket.appliance ?? "—"}</span>
@@ -169,7 +167,7 @@ function App() {
               <span role="cell" data-label="Failure">{ticket.failure ?? "—"}</span>
               <span role="cell" data-label="Other Details">{ticket.other_details ?? "—"}</span>
               <span role="cell" data-label="Status">
-                <span className="status-badge status-badge--muted">{ticket.task_type}</span>
+                <span className="status-badge status-badge--muted">{ticket.ticket_type}</span>
               </span>
             </div>
           ))}

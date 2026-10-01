@@ -4,10 +4,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from backend.repositories.sqlalquemy_task_repository import SQLAlchemyTaskRepository
-from backend.domain.task_action import TaskAction, TaskActionType
-from backend.persistence.task_entity import TaskEntity
-from backend.persistence.task_mapper import TaskMapper
+from backend.repositories.sqlalquemy_ticket_repository import SQLAlchemyTicketRepository
+from backend.domain.ticket_action import TicketAction, TicketActionType
+from backend.persistence.ticket_entity import TicketEntity
+from backend.persistence.ticket_mapper import TicketMapper
 from backend.tests.fakes.fake_database import FakeDatabase
 from backend.persistence.sqlalchemy_base import SQLAlchemyBase
 
@@ -24,18 +24,18 @@ def repository():
     
     TestSessionLocal = sessionmaker(bind=engine)
 
-    repository = SQLAlchemyTaskRepository(
+    repository = SQLAlchemyTicketRepository(
         session_factory=TestSessionLocal
     )
     
-    task = TaskAction(
-        task_id=None,
+    ticket = TicketAction(
+        ticket_id=None,
         name="Name",
         appliance="Appliance",
         address="Address",
         failure="Failure",
         other_details="Other details",
-        task_type = TaskActionType.NEW
+        ticket_type = TicketActionType.NEW
     )
     
     yield repository
@@ -43,84 +43,84 @@ def repository():
     SQLAlchemyBase.metadata.drop_all(engine)
         
 @pytest.fixture
-def task():
+def ticket():
 
-    task = TaskAction(
-        task_id=None,
+    ticket = TicketAction(
+        ticket_id=None,
         name="Name",
         appliance="Appliance",
         address="Address",
         failure="Failure",
         other_details="Other details",
-        task_type = TaskActionType.NEW
+        ticket_type = TicketActionType.NEW
     )
     
-    yield task
+    yield ticket
         
-def test_create(repository, task):
+def test_create(repository, ticket):
     
-    repository.create(task)
+    repository.create(ticket)
     
     with repository.session_factory() as session:
-        entity: TaskEntity = session.get(TaskEntity, 1)
+        entity: TicketEntity = session.get(TicketEntity, 1)
         
     assert entity is not None    
-    assert entity.task_id == 1
-    assert entity.name == task.name
-    assert entity.appliance == task.appliance
-    assert entity.address == task.address
-    assert entity.failure == task.failure
-    assert entity.other_details == task.other_details
-    assert entity.task_type == task.task_type
+    assert entity.ticket_id == 1
+    assert entity.name == ticket.name
+    assert entity.appliance == ticket.appliance
+    assert entity.address == ticket.address
+    assert entity.failure == ticket.failure
+    assert entity.other_details == ticket.other_details
+    assert entity.ticket_type == ticket.ticket_type
 
     
-def test_get_existing(repository, task):
+def test_get_existing(repository, ticket):
     
-    task.task_id = 5
-    
-    with repository.session_factory() as session:
-        session.add(TaskMapper.to_entity(task))
-        session.commit();
-        
-    get_task: TaskAction = repository.get(task.task_id)
-    
-    assert get_task is not None
-    assert get_task.task_id == task.task_id
-    assert get_task.name == task.name
-    assert get_task.appliance == task.appliance
-    assert get_task.address == task.address
-    assert get_task.failure == task.failure
-    assert get_task.other_details == task.other_details
-    assert get_task.task_type == task.task_type
-    
-def test_get_missing(repository, task):
-    
-    task.task_id = 5
+    ticket.ticket_id = 5
     
     with repository.session_factory() as session:
-        session.add(TaskMapper.to_entity(task))
+        session.add(TicketMapper.to_entity(ticket))
         session.commit();
         
-    get_task = repository.get(999)
+    get_ticket: TicketAction = repository.get(ticket.ticket_id)
     
-    assert get_task is None
-        
-def test_list(repository, task):
-    task.task_id = 5
+    assert get_ticket is not None
+    assert get_ticket.ticket_id == ticket.ticket_id
+    assert get_ticket.name == ticket.name
+    assert get_ticket.appliance == ticket.appliance
+    assert get_ticket.address == ticket.address
+    assert get_ticket.failure == ticket.failure
+    assert get_ticket.other_details == ticket.other_details
+    assert get_ticket.ticket_type == ticket.ticket_type
+    
+def test_get_missing(repository, ticket):
+    
+    ticket.ticket_id = 5
     
     with repository.session_factory() as session:
-        task.task_id = 1
-        session.add(TaskMapper.to_entity(task))
-        task.task_id = 2
-        session.add(TaskMapper.to_entity(task))
-        task.task_id = 3
-        session.add(TaskMapper.to_entity(task))
+        session.add(TicketMapper.to_entity(ticket))
         session.commit();
         
-    tasks_list = repository.list()
-    assert len(tasks_list) == 3    
-    assert tasks_list[0].task_id == 1
-    assert tasks_list[1].task_id == 2
-    assert tasks_list[2].task_id == 3
+    get_ticket = repository.get(999)
+    
+    assert get_ticket is None
+        
+def test_list(repository, ticket):
+    ticket.ticket_id = 5
+    
+    with repository.session_factory() as session:
+        ticket.ticket_id = 1
+        session.add(TicketMapper.to_entity(ticket))
+        ticket.ticket_id = 2
+        session.add(TicketMapper.to_entity(ticket))
+        ticket.ticket_id = 3
+        session.add(TicketMapper.to_entity(ticket))
+        session.commit();
+        
+    tickets_list = repository.list()
+    assert len(tickets_list) == 3
+    assert tickets_list[0].ticket_id == 1
+    assert tickets_list[1].ticket_id == 2
+    assert tickets_list[2].ticket_id == 3
 
     assert True

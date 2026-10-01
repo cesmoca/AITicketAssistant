@@ -1,7 +1,7 @@
 from openai import OpenAI
-from ..remote.task_ai import TaskAI
-from ..domain.task_action import TaskAction, TaskActionType
-class OpenAITaskAI(TaskAI):
+from ..remote.ticket_ai import TicketAI
+from ..domain.ticket_action import TicketAction, TicketActionType
+class OpenAITicketAI(TicketAI):
     
     previous_id = None
     
@@ -10,14 +10,14 @@ class OpenAITaskAI(TaskAI):
         self.client = OpenAI()  
         self.instructions = instructions 
         
-    def request_ai(self, text: str) -> TaskAction:
+    def request_ai(self, text: str) -> TicketAction:
 
         response = self.client.responses.parse(
             model=self.model,
             input=text,
             instructions=self.instructions,
             #previous_response_id=self.previous_id,
-            text_format=TaskAction
+            text_format=TicketAction
         )
 
         self.previous_id = response.id
