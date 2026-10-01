@@ -1,7 +1,9 @@
 from sqlalchemy.engine import create_engine
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session, sessionmaker
+
 from ..persistence.database import Database
 from ..persistence.sqlalchemy_base import SQLAlchemyBase
+
 
 class SQLiteDatabase(Database):
     DATABASE_URL = "sqlite:///./backend/tickets.db"

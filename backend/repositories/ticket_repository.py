@@ -1,30 +1,33 @@
 from abc import ABC, abstractmethod
+
+from ..domain.ticket import Ticket
 from ..domain.ticket_action import TicketAction
+
 
 class TicketRepository(ABC):
     
     @abstractmethod
-    def create(self, ticket: TicketAction) -> TicketAction:
+    def create(self, ticket: Ticket) -> Ticket:
         pass
     
     @abstractmethod
-    def update(self, ticket: TicketAction):
+    def update(self, ticket: Ticket) -> Ticket:
         pass
 
     @abstractmethod    
-    def get(self, id: int) -> TicketAction | None:
+    def get(self, id: int) -> Ticket | None:
         pass
 
     @abstractmethod
-    def list(self) -> list(TicketAction):
+    def list(self) -> list[Ticket]:
         pass
     
     @abstractmethod
-    def searchTicket(self) -> list(TicketAction):
+    def searchTicket(self, ticket: Ticket | TicketAction) -> list[Ticket]:
         pass
     
     @abstractmethod
-    def delete(self, ticket_id) -> Boolean:
+    def delete(self, ticket_id: int) -> bool:
         pass
     
     @abstractmethod

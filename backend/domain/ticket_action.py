@@ -1,6 +1,9 @@
-from pydantic import BaseModel
 from enum import Enum
+
+from pydantic import BaseModel
+
 from .task_info import TaskInfo
+
 
 class TicketActionType(str, Enum):
     NEW = "new"

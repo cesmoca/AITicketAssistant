@@ -1,18 +1,20 @@
-from sqlalchemy.sql import select, delete
-from .ticket_repository import TicketRepository
+from sqlalchemy.sql import delete, select
+
+from ..domain.ticket import Ticket
 from ..domain.ticket_action import TicketAction
-from ..persistence.database import Database
-from ..persistence.ticket_entity import TicketEntity 
+from ..persistence.ticket_entity import TicketEntity
 from ..persistence.ticket_mapper import TicketMapper
+from .ticket_repository import TicketRepository
+
 
 class SQLAlchemyTicketRepository(TicketRepository):
         
     def __init__(self, session_factory):
         self.session_factory = session_factory
         
-    def create(self, ticket: TicketAction) -> TicketAction:
+    def create(self, ticket: Ticket) -> Ticket:
 
-        if ticket.ticket_id is not None:
+        if ticket.id is not None:
             raise ValueError("Cannot create a Ticket that already has an ID")
         
 
@@ -28,8 +30,8 @@ class SQLAlchemyTicketRepository(TicketRepository):
             return TicketMapper.to_domain(entity)
             
 
-    def get(self, ticket_id: int) -> TicketAction | None:
-        statement = select(TicketEntity).where(TicketEntity.ticket_id == ticket_id)
+    def get(self, ticket_id: int) -> Ticket | None:
+        statement = select(TicketEntity).where(TicketEntity.id == ticket_id)
         
         with self.session_factory() as session:
             entity = session.scalar(statement)
@@ -40,16 +42,16 @@ class SQLAlchemyTicketRepository(TicketRepository):
             return TicketMapper.to_domain(entity)
         
             
-    def update(self, ticket: TicketAction) -> TicketAction:
-        if ticket.ticket_id is None:
+    def update(self, ticket: Ticket) -> Ticket:
+        if ticket.id is None:
             raise ValueError("The ticket should have an id")
         
-        statement = select(TicketEntity).where(TicketEntity.ticket_id == ticket.ticket_id)
+        statement = select(TicketEntity).where(TicketEntity.id == ticket.id)
         
         with self.session_factory() as session:
             old_entity = session.scalar(statement)
             if old_entity is None:
-                raise ValueError(f"Could not find a Ticket with id {ticket.ticket_id}")
+                raise ValueError(f"Could not find a Ticket with id {ticket.id}")
             
             TicketMapper.update_entity(old_entity, ticket)
             session.commit()
@@ -59,7 +61,7 @@ class SQLAlchemyTicketRepository(TicketRepository):
             
 
 
-    def list(self) -> list[TicketAction]:
+    def list(self) -> list[Ticket]:
         statement = select(TicketEntity)
         
         with self.session_factory() as session:
@@ -67,12 +69,12 @@ class SQLAlchemyTicketRepository(TicketRepository):
             return [TicketMapper.to_domain(entity) for entity in entities_list]
         
         
-    def searchTicket(self, ticket) -> list(TicketAction):
-        all_tickets: list[TicketAction] = self.list()
+    def searchTicket(self, ticket: Ticket | TicketAction) -> list[Ticket]:
+        all_tickets: list[Ticket] = self.list()
         candidate_tickets = [candidate_ticket for candidate_ticket in all_tickets if self._areTicketsSimilar(ticket, candidate_ticket)]
         return candidate_tickets
     
-    def delete(self, ticket_id) -> Boolean:
+    def delete(self, ticket_id: int) -> bool:
         
         if ticket_id is None:
             raise ValueError("Delete should have a valid ticket_id")
@@ -93,11 +95,10 @@ class SQLAlchemyTicketRepository(TicketRepository):
             session.execute(delete(TicketEntity))
             session.commit()
         
-    def _areTicketsSimilar(self, ticket1: TicketAction, ticket2: TicketAction) -> list[TicketAction]:
-        if ticket1.info.name.strip().lower() == ticket2.info.name.strip().lower():
+    def _areTicketsSimilar(self, ticket1: Ticket | TicketAction, ticket2: Ticket) -> bool:
+        if (ticket1.info.name is not None and ticket2.info.name is not None
+                and ticket1.info.name.strip().lower() == ticket2.info.name.strip().lower()):
             return True
-        
-        if ticket1.info.address.strip().lower() == ticket2.info.address.strip().lower():
-            return True
-        
-        return False
+
+        return (ticket1.info.address is not None and ticket2.info.address is not None
+                and ticket1.info.address.strip().lower() == ticket2.info.address.strip().lower())

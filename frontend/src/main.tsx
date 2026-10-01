@@ -12,13 +12,14 @@ interface TaskInfo {
 }
 
 interface Ticket {
-  ticket_id: number | null;
-  ticket_type: string;
+  id: number;
+  status: "active" | "completed" | "cancelled" | "suspended" | "other";
   info: TaskInfo;
 }
 
 interface ProcessTicketResult {
   status: string;
+  data: string | null;
   result: Ticket | null;
 }
 
@@ -46,7 +47,7 @@ async function processTicket(text: string): Promise<ProcessTicketResult> {
 
 async function listTickets(): Promise<Ticket[]> {
   const response = await fetch(
-    "http://localhost:8000/ticketsList",
+    "http://localhost:8000/listTickets",
     {
       method: "GET",
       headers: {
@@ -163,7 +164,7 @@ function App() {
           <span role="columnheader">Status</span>
         </div>
         {ticketsList.map((ticket) => (
-            <div className="ticket-row" role="row" key={ticket.ticket_id ?? `${ticket.info.name}-${ticket.info.appliance}`}>
+            <div className="ticket-row" role="row" key={ticket.id}>
               <span role="cell" data-label="Date">â€”</span>
               <span role="cell" data-label="Name">{ticket.info.name ?? "â€”"}</span>
               <span role="cell" data-label="Appliance">{ticket.info.appliance ?? "â€”"}</span>
@@ -171,7 +172,7 @@ function App() {
               <span role="cell" data-label="Failure">{ticket.info.failure ?? "â€”"}</span>
               <span role="cell" data-label="Other Details">{ticket.info.other_details ?? "â€”"}</span>
               <span role="cell" data-label="Status">
-                <span className="status-badge status-badge--muted">{ticket.ticket_type}</span>
+                <span className="status-badge status-badge--muted">{ticket.status}</span>
               </span>
             </div>
           ))}

@@ -3,8 +3,11 @@ from pprint import pprint
 import pytest
 
 from backend.constants import MODEL, SYSTEM_PROMPT
+from backend.domain.ticket_action import TicketAction
+from backend.processors.ticket_processor import ProcessTicketRequest
 from backend.remote.openai_ticket_ai import OpenAITicketAI
 from backend.tests.utils.tickets_list import cases
+
 
 def normalize(value: str | None) -> str | None:
     return value.strip().lower() if value is not None else None
@@ -16,7 +19,8 @@ def ticket_ai():
 
 @pytest.mark.parametrize("case", cases)
 def test_ticket_ai(ticket_ai, case):
-    ticket = ticket_ai.request_ai(case["input"])
+    ticket = ticket_ai.request_ai(ProcessTicketRequest(text=case["input"]))
+    assert isinstance(ticket, TicketAction)
 
     print("> TICKET ANSWER")
     pprint(ticket.model_dump_json(indent=2))

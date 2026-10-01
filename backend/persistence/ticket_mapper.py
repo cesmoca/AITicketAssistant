@@ -1,27 +1,26 @@
-from enum import StrEnum
-from ..domain.ticket_action import TicketAction, TicketActionType
 from ..domain.task_info import TaskInfo
+from ..domain.ticket import Ticket, TicketStatus
 from .ticket_entity import TicketEntity
 
 
 class TicketMapper:
     
     @staticmethod
-    def to_entity(ticket: TicketAction) -> TicketEntity:
+    def to_entity(ticket: Ticket) -> TicketEntity:
         return TicketEntity(
-        ticket_id = ticket.ticket_id,
+        id = ticket.id,
         name = ticket.info.name,
         appliance = ticket.info.appliance,
         address = ticket.info.address,
         failure = ticket.info.failure,
         other_details = ticket.info.other_details,
-        ticket_type = ticket.ticket_type.value,
+        status = ticket.status.value,
         )
     
     @staticmethod
-    def to_domain(entity: TicketEntity) -> TicketAction:
-        return TicketAction(
-        ticket_id = entity.ticket_id,
+    def to_domain(entity: TicketEntity) -> Ticket:
+        return Ticket(
+        id = entity.id,
         info = TaskInfo(
             name = entity.name,
             appliance = entity.appliance,
@@ -29,14 +28,14 @@ class TicketMapper:
             failure = entity.failure,
             other_details = entity.other_details,
         ),
-        ticket_type = TicketActionType(entity.ticket_type)
+        status = TicketStatus(entity.status)
         )
         
     @staticmethod
-    def update_entity(entity: TicketEntity, ticket: TicketAction) -> None:
+    def update_entity(entity: TicketEntity, ticket: Ticket) -> None:
         entity.name = ticket.info.name
         entity.appliance = ticket.info.appliance
         entity.address = ticket.info.address
         entity.failure = ticket.info.failure
         entity.other_details = ticket.info.other_details
-        entity.ticket_type = ticket.ticket_type.value
+        entity.status = ticket.status.value

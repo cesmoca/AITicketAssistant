@@ -1,24 +1,18 @@
-from pydantic import BaseModel
 from pprint import pprint
-from .ticket_processor import TicketProcessor
-from ..domain.ticket_action import TicketAction, TicketActionType
 
-class ProcessTicketRequest(BaseModel):
-    text: str
-    
-class ProcessTicketResult(BaseModel):
-    status: str
-    result: TicketAction | None
+from ..domain.ticket import Ticket
+from ..domain.ticket_action import TicketAction
+from .ticket_processor import ProcessTicketRequest, ProcessTicketResult, TicketProcessor
 
-    
+
 class AITicketProcessor(TicketProcessor):
     
     def __init__(self, repository, ticket_ai):
         self.repository = repository 
         self.ticket_ai = ticket_ai
     
-    def process_ticket(self, input: str) -> ProcessTicketResult:
-        ticket = self.ticket_ai.request_ai(input)
+    def process_ticket(self, request: ProcessTicketRequest) -> ProcessTicketResult:
+        ticket = self.ticket_ai.request_ai(request)
         pprint(ticket)
         
         if ticket.ticket_type == "new":
@@ -40,7 +34,7 @@ class AITicketProcessor(TicketProcessor):
             candidates = self.repository.searchTicket(ticket)
             
             if len(candidates) == 1:
-                self.repository.delete(candidates[0].ticket_id)
+                self.repository.delete(candidates[0].id)
             else:
                 return ProcessTicketResult(status="resolution_required", result=None)
                 
@@ -49,9 +43,9 @@ class AITicketProcessor(TicketProcessor):
             
         return ProcessTicketResult(status="ok", result=ticket)
     
-    def _updateTicket(self, toTicket: TicketAction, fromTicket: TicketAction):
+    def _updateTicket(self, toTicket: TicketAction, fromTicket: Ticket):
         
-        toTicket.ticket_id = fromTicket.ticket_id
+        toTicket.ticket_id = fromTicket.id
         if toTicket.info.name is None:
             toTicket.info.name = fromTicket.info.name
             

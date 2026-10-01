@@ -1,11 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from .constants import MODEL, SYSTEM_PROMPT
+from .domain.ticket import Ticket
+from .persistence.sqlite_database import SQLiteDatabase
+from .processors.ai_ticket_processor import (
+    AITicketProcessor,
+    ProcessTicketRequest,
+    ProcessTicketResult,
+)
 from .remote.openai_ticket_ai import OpenAITicketAI
 from .repositories.sqlalquemy_ticket_repository import SQLAlchemyTicketRepository
-from .persistence.sqlite_database import SQLiteDatabase
-from .processors.ai_ticket_processor import AITicketProcessor, ProcessTicketRequest, ProcessTicketResult
-from .domain.ticket_action import TicketAction, TicketActionType
-from .constants import SYSTEM_PROMPT, MODEL
 
 # Frontend: cd frontend && npm run dev
 # Backend: uvicorn backend.main:app --reload (desde directorio root)
@@ -30,11 +35,11 @@ app.ticket_processor =  AITicketProcessor(repository, ticket_ai)
 # Requests
 @app.post("/processTicket")
 def process_ticket(request: ProcessTicketRequest) -> ProcessTicketResult:
-    result = app.ticket_processor.process_ticket(request.text)
+    result = app.ticket_processor.process_ticket(request)
     return result
 
-@app.get("/ticketsList")
-def health() -> dict[str, list[TicketAction]]:
+@app.get("/listTickets")
+def list_tickets() -> dict[str, list[Ticket]]:
     tickets_list = repository.list()
     return {"list": tickets_list}
 

@@ -1,20 +1,23 @@
-from backend.processors.ticket_processor import TicketProcessor
-from backend.domain.ticket_action import TicketAction, TicketActionType
 from backend.domain.task_info import TaskInfo
-from backend.processors.ai_ticket_processor import ProcessTicketResult
+from backend.domain.ticket import Ticket, TicketStatus
+from backend.processors.ticket_processor import (
+    ProcessTicketRequest,
+    ProcessTicketResult,
+    TicketProcessor,
+)
+
+
 class FakeTicketProcessor(TicketProcessor):
-    
-    def process_ticket(self, input: str) -> ProcessTicketResult:
-        ticket = TicketAction(
-            ticket_id=1,
+    def process_ticket(self, request: ProcessTicketRequest) -> ProcessTicketResult:
+        ticket = Ticket(
+            id=1,
             info=TaskInfo(
                 name="Pedro",
                 appliance="Antena",
                 address="Calle agua",
-                failure=f"FAKE: {input}",
+                failure=f"FAKE: {request.text}",
                 other_details="Tiene prisa",
             ),
-            ticket_type=TicketActionType.NEW
+            status=TicketStatus.ACTIVE,
         )
-        
-        return ProcessTicketResult(status="ok", result=ticket)
+        return ProcessTicketResult(status="ok", data=None, result=ticket)
