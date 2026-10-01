@@ -1,26 +1,26 @@
 from abc import ABC, abstractmethod
-from ..domain.task import Task
+from ..domain.task_action import TaskAction
 
 class TaskRepository(ABC):
     
     @abstractmethod
-    def create(self, task: Task) -> Task:
+    def create(self, task: TaskAction) -> TaskAction:
         pass
     
     @abstractmethod
-    def update(self, task: Task):
+    def update(self, task: TaskAction):
         pass
 
     @abstractmethod    
-    def get(self, id: int) -> Task | None:
+    def get(self, id: int) -> TaskAction | None:
         pass
 
     @abstractmethod
-    def list(self) -> list(Task):
+    def list(self) -> list(TaskAction):
         pass
     
     @abstractmethod
-    def searchTask(self) -> list(Task):
+    def searchTask(self) -> list(TaskAction):
         pass
     
     @abstractmethod

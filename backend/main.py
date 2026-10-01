@@ -4,7 +4,7 @@ from .remote.openai_task_ai import OpenAITaskAI
 from .repositories.sqlalquemy_task_repository import SQLAlchemyTaskRepository
 from .persistence.sqlite_database import SQLiteDatabase
 from .processors.ai_task_processor import AITaskProcessor, ProcessTaskRequest, ProcessTaskResult
-from .domain.task import Task, TaskType
+from .domain.task_action import TaskAction, TaskActionType
 from .constants import SYSTEM_PROMPT, MODEL
 
 # Frontend: cd frontend && npm run dev
@@ -34,7 +34,7 @@ def process_task(request: ProcessTaskRequest) -> ProcessTaskResult:
     return result
 
 @app.get("/ticketsList")
-def health() -> dict[str, list[Task]]:
+def health() -> dict[str, list[TaskAction]]:
     tickets_list = repository.list()
     return {"list": tickets_list}
 

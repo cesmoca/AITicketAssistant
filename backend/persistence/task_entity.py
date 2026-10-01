@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import Integer
 from ..persistence.sqlalchemy_base import SQLAlchemyBase
-from ..domain.task import Task
+from ..domain.task_action import TaskAction
 
 class TaskEntity(SQLAlchemyBase):
     

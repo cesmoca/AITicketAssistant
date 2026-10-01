@@ -1,14 +1,14 @@
 from pydantic import BaseModel
 from pprint import pprint
 from .task_processor import TaskProcessor
-from ..domain.task import Task, TaskType
+from ..domain.task_action import TaskAction, TaskActionType
 
 class ProcessTaskRequest(BaseModel):
     text: str
     
 class ProcessTaskResult(BaseModel):
     status: str
-    result: Task | None
+    result: TaskAction | None
 
     
 class AITaskProcessor(TaskProcessor):
@@ -49,7 +49,7 @@ class AITaskProcessor(TaskProcessor):
             
         return ProcessTaskResult(status="ok", result=task)
     
-    def _updateTask(self, toTask: Task, fromTask: Task):
+    def _updateTask(self, toTask: TaskAction, fromTask: TaskAction):
         
         toTask.task_id = fromTask.task_id
         if toTask.name is None:

@@ -1,6 +1,6 @@
 from sqlalchemy.sql import select, delete
 from .task_repository import TaskRepository
-from ..domain.task import Task
+from ..domain.task_action import TaskAction
 from ..persistence.database import Database
 from ..persistence.task_entity import TaskEntity 
 from ..persistence.task_mapper import TaskMapper
@@ -10,7 +10,7 @@ class SQLAlchemyTaskRepository(TaskRepository):
     def __init__(self, session_factory):
         self.session_factory = session_factory
         
-    def create(self, task: Task) -> Task:
+    def create(self, task: TaskAction) -> TaskAction:
 
         if task.task_id is not None:
             raise ValueError("Cannot create a Task that already has an ID")
@@ -28,7 +28,7 @@ class SQLAlchemyTaskRepository(TaskRepository):
             return TaskMapper.to_domain(entity)
             
 
-    def get(self, task_id: int) -> Task | None:
+    def get(self, task_id: int) -> TaskAction | None:
         statement = select(TaskEntity).where(TaskEntity.task_id == task_id)
         
         with self.session_factory() as session:
@@ -40,7 +40,7 @@ class SQLAlchemyTaskRepository(TaskRepository):
             return TaskMapper.to_domain(entity)
         
             
-    def update(self, task: Task) -> Task:
+    def update(self, task: TaskAction) -> TaskAction:
         if task.task_id is None:
             raise ValueError("The task should have an id")
         
@@ -59,7 +59,7 @@ class SQLAlchemyTaskRepository(TaskRepository):
             
 
 
-    def list(self) -> list[Task]:
+    def list(self) -> list[TaskAction]:
         statement = select(TaskEntity)
         
         with self.session_factory() as session:
@@ -67,8 +67,8 @@ class SQLAlchemyTaskRepository(TaskRepository):
             return [TaskMapper.to_domain(entity) for entity in entities_list]
         
         
-    def searchTask(self, task) -> list(Task):
-        all_tasks: list[Task] = self.list()
+    def searchTask(self, task) -> list(TaskAction):
+        all_tasks: list[TaskAction] = self.list()
         candidate_tasks = [candidate_task for candidate_task in all_tasks if self._areTasksSimilar(task, candidate_task)]
         return candidate_tasks
     
@@ -93,7 +93,7 @@ class SQLAlchemyTaskRepository(TaskRepository):
             session.execute(delete(TaskEntity))
             session.commit()
         
-    def _areTasksSimilar(self, task1: Task, task2: Task) -> list[Task]:
+    def _areTasksSimilar(self, task1: TaskAction, task2: TaskAction) -> list[TaskAction]:
         if task1.name.strip().lower() == task2.name.strip().lower():
             return True
         

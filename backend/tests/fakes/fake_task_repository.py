@@ -3,22 +3,22 @@ from backend.repositories.task_repository import TaskRepository
 class FakeTaskRepository(TaskRepository):
         
 
-    def create(self, task: Task) -> Task:
+    def create(self, task: TaskAction) -> TaskAction:
         pass
             
 
-    def get(self, task_id: int) -> Task | None:
+    def get(self, task_id: int) -> TaskAction | None:
         pass
         
             
-    def update(self, task: Task) -> Task:
+    def update(self, task: TaskAction) -> TaskAction:
         pass
             
 
-    def list(self) -> list[Task]:
+    def list(self) -> list[TaskAction]:
         pass
         
-    def searchTask(self) -> list(Task):
+    def searchTask(self) -> list(TaskAction):
         pass
    
     def delete(self, task_id) -> Boolean:

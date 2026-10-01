@@ -1,6 +1,6 @@
 from openai import OpenAI
 from ..remote.task_ai import TaskAI
-from ..domain.task import Task, TaskType
+from ..domain.task_action import TaskAction, TaskActionType
 class OpenAITaskAI(TaskAI):
     
     previous_id = None
@@ -10,14 +10,14 @@ class OpenAITaskAI(TaskAI):
         self.client = OpenAI()  
         self.instructions = instructions 
         
-    def request_ai(self, text: str) -> Task:
+    def request_ai(self, text: str) -> TaskAction:
 
         response = self.client.responses.parse(
             model=self.model,
             input=text,
             instructions=self.instructions,
             #previous_response_id=self.previous_id,
-            text_format=Task
+            text_format=TaskAction
         )
 
         self.previous_id = response.id

@@ -1,6 +1,6 @@
 import pytest
 
-from backend.domain.task import Task, TaskType
+from backend.domain.task_action import TaskAction, TaskActionType
 from backend.processors.ai_task_processor import AITaskProcessor, ProcessTaskResult
 from backend.tests.fakes.fake_task_ai import FakeTaskAI
 from backend.tests.fakes.fake_task_repository import FakeTaskRepository
@@ -20,14 +20,14 @@ def processor(task_ai, repository):
 
 
 def test_process_task(processor: AITaskProcessor, task_ai, repository) -> ProcessTaskResult:
-    task_ai.test_task = Task(
+    task_ai.test_task = TaskAction(
         task_id=None,
         name="Name",
         appliance="Appliance",
         address="Address",
         failure="Failure",
         other_details="Other details",
-        task_type = TaskType.NEW
+        task_type = TaskActionType.NEW
     )
     
     result = processor.process_task("Some ticket")

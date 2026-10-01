@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from backend.repositories.sqlalquemy_task_repository import SQLAlchemyTaskRepository
-from backend.domain.task import Task, TaskType
+from backend.domain.task_action import TaskAction, TaskActionType
 from backend.persistence.task_entity import TaskEntity
 from backend.persistence.task_mapper import TaskMapper
 from backend.tests.fakes.fake_database import FakeDatabase
@@ -28,14 +28,14 @@ def repository():
         session_factory=TestSessionLocal
     )
     
-    task = Task(
+    task = TaskAction(
         task_id=None,
         name="Name",
         appliance="Appliance",
         address="Address",
         failure="Failure",
         other_details="Other details",
-        task_type = TaskType.NEW
+        task_type = TaskActionType.NEW
     )
     
     yield repository
@@ -45,14 +45,14 @@ def repository():
 @pytest.fixture
 def task():
 
-    task = Task(
+    task = TaskAction(
         task_id=None,
         name="Name",
         appliance="Appliance",
         address="Address",
         failure="Failure",
         other_details="Other details",
-        task_type = TaskType.NEW
+        task_type = TaskActionType.NEW
     )
     
     yield task
@@ -82,7 +82,7 @@ def test_get_existing(repository, task):
         session.add(TaskMapper.to_entity(task))
         session.commit();
         
-    get_task: Task = repository.get(task.task_id)
+    get_task: TaskAction = repository.get(task.task_id)
     
     assert get_task is not None
     assert get_task.task_id == task.task_id

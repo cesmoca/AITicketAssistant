@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
-from ..domain.task import Task
+from ..domain.task_action import TaskAction
 
 class TaskProcessor(ABC):
     
     @abstractmethod
-    def process_task(self, input: str) -> Task:
+    def process_task(self, input: str) -> TaskAction:
         pass
         
