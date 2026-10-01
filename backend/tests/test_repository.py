@@ -6,6 +6,7 @@ from sqlalchemy.pool import StaticPool
 
 from backend.repositories.sqlalquemy_ticket_repository import SQLAlchemyTicketRepository
 from backend.domain.ticket_action import TicketAction, TicketActionType
+from backend.domain.task_info import TaskInfo
 from backend.persistence.ticket_entity import TicketEntity
 from backend.persistence.ticket_mapper import TicketMapper
 from backend.tests.fakes.fake_database import FakeDatabase
@@ -30,11 +31,13 @@ def repository():
     
     ticket = TicketAction(
         ticket_id=None,
-        name="Name",
-        appliance="Appliance",
-        address="Address",
-        failure="Failure",
-        other_details="Other details",
+        info=TaskInfo(
+            name="Name",
+            appliance="Appliance",
+            address="Address",
+            failure="Failure",
+            other_details="Other details",
+        ),
         ticket_type = TicketActionType.NEW
     )
     
@@ -47,11 +50,13 @@ def ticket():
 
     ticket = TicketAction(
         ticket_id=None,
-        name="Name",
-        appliance="Appliance",
-        address="Address",
-        failure="Failure",
-        other_details="Other details",
+        info=TaskInfo(
+            name="Name",
+            appliance="Appliance",
+            address="Address",
+            failure="Failure",
+            other_details="Other details",
+        ),
         ticket_type = TicketActionType.NEW
     )
     
@@ -66,11 +71,11 @@ def test_create(repository, ticket):
         
     assert entity is not None    
     assert entity.ticket_id == 1
-    assert entity.name == ticket.name
-    assert entity.appliance == ticket.appliance
-    assert entity.address == ticket.address
-    assert entity.failure == ticket.failure
-    assert entity.other_details == ticket.other_details
+    assert entity.name == ticket.info.name
+    assert entity.appliance == ticket.info.appliance
+    assert entity.address == ticket.info.address
+    assert entity.failure == ticket.info.failure
+    assert entity.other_details == ticket.info.other_details
     assert entity.ticket_type == ticket.ticket_type
 
     
@@ -86,11 +91,11 @@ def test_get_existing(repository, ticket):
     
     assert get_ticket is not None
     assert get_ticket.ticket_id == ticket.ticket_id
-    assert get_ticket.name == ticket.name
-    assert get_ticket.appliance == ticket.appliance
-    assert get_ticket.address == ticket.address
-    assert get_ticket.failure == ticket.failure
-    assert get_ticket.other_details == ticket.other_details
+    assert get_ticket.info.name == ticket.info.name
+    assert get_ticket.info.appliance == ticket.info.appliance
+    assert get_ticket.info.address == ticket.info.address
+    assert get_ticket.info.failure == ticket.info.failure
+    assert get_ticket.info.other_details == ticket.info.other_details
     assert get_ticket.ticket_type == ticket.ticket_type
     
 def test_get_missing(repository, ticket):

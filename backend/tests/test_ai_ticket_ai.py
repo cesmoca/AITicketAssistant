@@ -23,8 +23,8 @@ def test_ticket_ai(ticket_ai, case):
     print("> CASE")
     pprint(case)
 
-    assert normalize(ticket.name) == normalize(case["expected_name"])
-    assert normalize(ticket.address) == normalize(case["expected_address"])
-    assert normalize(ticket.appliance) == normalize(case["expected_appliance"])
-    assert normalize(ticket.failure) == normalize(case["expected_failure"])
+    assert normalize(ticket.info.name) == normalize(case["expected_name"])
+    assert normalize(ticket.info.address) == normalize(case["expected_address"])
+    assert normalize(ticket.info.appliance) == normalize(case["expected_appliance"])
+    assert normalize(ticket.info.failure) == normalize(case["expected_failure"])
     assert normalize(ticket.ticket_type) == normalize(case["expected_type"])

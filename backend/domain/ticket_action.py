@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from enum import Enum
+from .task_info import TaskInfo
 
 class TicketActionType(str, Enum):
     NEW = "new"
@@ -9,9 +10,5 @@ class TicketActionType(str, Enum):
 
 class TicketAction(BaseModel):
     ticket_id: int | None
-    name: str | None
-    appliance: str | None
-    address: str | None
-    failure: str | None
-    other_details: str|None
+    info: TaskInfo
     ticket_type: TicketActionType

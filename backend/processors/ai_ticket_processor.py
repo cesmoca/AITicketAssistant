@@ -52,17 +52,17 @@ class AITicketProcessor(TicketProcessor):
     def _updateTicket(self, toTicket: TicketAction, fromTicket: TicketAction):
         
         toTicket.ticket_id = fromTicket.ticket_id
-        if toTicket.name is None:
-            toTicket.name = fromTicket.name
+        if toTicket.info.name is None:
+            toTicket.info.name = fromTicket.info.name
             
-        if toTicket.appliance is None:
-            toTicket.appliance = fromTicket.appliance
+        if toTicket.info.appliance is None:
+            toTicket.info.appliance = fromTicket.info.appliance
             
-        if toTicket.address is None:
-            toTicket.address = fromTicket.address
+        if toTicket.info.address is None:
+            toTicket.info.address = fromTicket.info.address
             
-        if toTicket.failure is None:
-            toTicket.failure = fromTicket.failure
+        if toTicket.info.failure is None:
+            toTicket.info.failure = fromTicket.info.failure
             
         
         

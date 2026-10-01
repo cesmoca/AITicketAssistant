@@ -94,10 +94,10 @@ class SQLAlchemyTicketRepository(TicketRepository):
             session.commit()
         
     def _areTicketsSimilar(self, ticket1: TicketAction, ticket2: TicketAction) -> list[TicketAction]:
-        if ticket1.name.strip().lower() == ticket2.name.strip().lower():
+        if ticket1.info.name.strip().lower() == ticket2.info.name.strip().lower():
             return True
         
-        if ticket1.address.strip().lower() == ticket2.address.strip().lower():
+        if ticket1.info.address.strip().lower() == ticket2.info.address.strip().lower():
             return True
         
         return False

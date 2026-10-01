@@ -14,10 +14,10 @@ def test_endopoint_process_ticket():
     assert response.status_code == 200
     data = response.json()
     assert data["result"]["ticket_id"] == 1
-    assert data["result"]["name"] == "Pedro"
-    assert data["result"]["address"] == "Calle agua"
-    assert data["result"]["appliance"] == "Antena"
-    assert data["result"]["failure"] == "FAKE: I am fed up!"
-    assert data["result"]["other_details"] == "Tiene prisa"
+    assert data["result"]["info"]["name"] == "Pedro"
+    assert data["result"]["info"]["address"] == "Calle agua"
+    assert data["result"]["info"]["appliance"] == "Antena"
+    assert data["result"]["info"]["failure"] == "FAKE: I am fed up!"
+    assert data["result"]["info"]["other_details"] == "Tiene prisa"
     assert data["result"]["ticket_type"] == "new"
 

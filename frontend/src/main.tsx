@@ -3,14 +3,18 @@ import { createRoot } from "react-dom/client";
 import { useState } from "react";
 import "./styles.css";
 
-interface Ticket {
-  ticket_id: number | null;
+interface TaskInfo {
   name: string | null;
   appliance: string | null;
   address: string | null;
   failure: string | null;
   other_details: string | null;
+}
+
+interface Ticket {
+  ticket_id: number | null;
   ticket_type: string;
+  info: TaskInfo;
 }
 
 interface ProcessTicketResult {
@@ -69,7 +73,7 @@ function App() {
     const response = await processTicket(text);
 
     if (response.status === "ok") {
-      setResult(response.result === null ? "—" : JSON.stringify(response.result, null, 2));
+      setResult(response.result === null ? "â€”" : JSON.stringify(response.result, null, 2));
       return;
     }
 
@@ -159,13 +163,13 @@ function App() {
           <span role="columnheader">Status</span>
         </div>
         {ticketsList.map((ticket) => (
-            <div className="ticket-row" role="row" key={ticket.ticket_id ?? `${ticket.name}-${ticket.appliance}`}>
-              <span role="cell" data-label="Date">—</span>
-              <span role="cell" data-label="Name">{ticket.name ?? "—"}</span>
-              <span role="cell" data-label="Appliance">{ticket.appliance ?? "—"}</span>
-              <span role="cell" data-label="Address">{ticket.address ?? "—"}</span>
-              <span role="cell" data-label="Failure">{ticket.failure ?? "—"}</span>
-              <span role="cell" data-label="Other Details">{ticket.other_details ?? "—"}</span>
+            <div className="ticket-row" role="row" key={ticket.ticket_id ?? `${ticket.info.name}-${ticket.info.appliance}`}>
+              <span role="cell" data-label="Date">â€”</span>
+              <span role="cell" data-label="Name">{ticket.info.name ?? "â€”"}</span>
+              <span role="cell" data-label="Appliance">{ticket.info.appliance ?? "â€”"}</span>
+              <span role="cell" data-label="Address">{ticket.info.address ?? "â€”"}</span>
+              <span role="cell" data-label="Failure">{ticket.info.failure ?? "â€”"}</span>
+              <span role="cell" data-label="Other Details">{ticket.info.other_details ?? "â€”"}</span>
               <span role="cell" data-label="Status">
                 <span className="status-badge status-badge--muted">{ticket.ticket_type}</span>
               </span>

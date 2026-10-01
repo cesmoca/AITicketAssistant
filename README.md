@@ -78,15 +78,15 @@ The frontend is a Vite-powered React application written in TypeScript. It provi
 
 ## Domain model
 
-A ticket currently contains:
+`TicketAction` contains `ticket_id`, `ticket_type`, and `info: TaskInfo`. The database stores the information as flat columns; the API returns it nested under `info`:
 
 ```text
 ticket_id       integer | null
-name          string  | null
-appliance     string  | null
-address       string  | null
-failure       string  | null
-other_details string  | null
+info.name          string | null
+info.appliance     string | null
+info.address       string | null
+info.failure       string | null
+info.other_details string | null
 ticket_type     new | update | cancel | undetermined
 ```
 
@@ -113,11 +113,13 @@ Successful processing returns a typed result:
   "status": "ok",
   "result": {
     "ticket_id": 1,
-    "name": "Sebastian",
-    "appliance": "Televisión",
-    "address": null,
-    "failure": "Se ve mal",
-    "other_details": null,
+    "info": {
+      "name": "Sebastian",
+      "appliance": "Televisión",
+      "address": null,
+      "failure": "Se ve mal",
+      "other_details": null
+    },
     "ticket_type": "new"
   }
 }
