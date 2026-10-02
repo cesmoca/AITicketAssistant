@@ -249,7 +249,9 @@ The AI evaluation calls the configured OpenAI model, so it requires `OPENAI_API_
 `evals/runner.py` loads JSONL cases, calls the existing production AI parser,
 and records the input, expected output, and actual parsed `TicketAction`.
 It does not execute repository operations or modify the application database.
-No JSONL datasets or aggregate metrics are included yet.
+The first workflow dataset includes 56 behavior targets in
+`evals/datasets/tickets/ticket_eval_v1/dataset.jsonl`; aggregate metrics remain
+unimplemented. Future behavior targets may fail against the current application.
 
 From the repository root:
 
@@ -279,7 +281,8 @@ backend\.venv\Scripts\python.exe -m pytest evals/tests -q
 ```
 
 The default dataset source is `evals/datasets/`, searched recursively; a JSONL
-file or directory can also be passed explicitly. No datasets are included yet.
+file or directory can also be passed explicitly. The included `ticket_eval_v1`
+dataset uses the production state name `SUSPENDED` for paused tickets.
 Workflow results print PASS/FAIL, include field-level diagnostics, and are saved
 as `evals/results/<run_id>.json`. Failures produce a non-zero exit code. Full runs
 continue after exceptions while printing their tracebacks; `--case` lets original
@@ -376,7 +379,7 @@ This is a focused portfolio and learning project, not a production deployment. N
 
 ### What I would do differently next
 
-- Add evaluation datasets for the isolated workflow runner; add aggregate metrics in a later stage.
+- Extend versioned evaluation datasets; add aggregate metrics in a later stage.
 - Validate and version the AI contract at runtime rather than trusting external JSON implicitly.
 - Add timestamps and explicit ticket history before implementing production ordering or audit requirements.
 - Move configuration and secrets into a settings layer, add migrations, and replace bulk deletion with an authenticated, confirmed operation.

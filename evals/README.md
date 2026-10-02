@@ -9,7 +9,10 @@ Two runners are available:
 
 Both reuse `OpenAITicketAI` and the configuration in
 `backend/constants/constants.py`. Neither imports `backend.main` or touches the
-application database. No evaluation datasets are included.
+application database. The first workflow dataset contains 56 behavior targets at
+`evals/datasets/tickets/ticket_eval_v1/dataset.jsonl`. It includes future features
+and is expected to report failures against the current implementation.
+The dataset uses the production state name `SUSPENDED` for paused tickets.
 
 ## Parser-only dataset contract
 
@@ -21,7 +24,7 @@ Supply a UTF-8 JSONL file with one JSON object per line. Each object must have:
 An optional `id` is copied to the result. When omitted, the runner assigns IDs
 such as `case_001` using the case's position in the dataset.
 
-Blank lines are ignored. No dataset is included in this skeleton.
+Blank lines are ignored. The included dataset targets the full workflow runner.
 
 ## Run the parser-only mode
 
@@ -184,7 +187,7 @@ python evals/run_eval.py --list
 
 The default source is `evals/datasets/`, searched recursively for `*.jsonl` in
 sorted order. You may supply a file or directory as a positional argument.
-Since no datasets are included, execution requires adding your own dataset.
+The included `ticket_eval_v1` dataset is loaded by default.
 `--list` validates and lists IDs without calling AI or creating a database.
 
 Without activating the virtual environment, use its interpreter directly:
@@ -239,7 +242,7 @@ backend\.venv\Scripts\python.exe -m pytest evals/tests -q
 ```
 
 - Do not change production AI behavior, prompts, or unrelated production code.
-- Do not create datasets yet or implement aggregate metrics in this stage.
+- Keep dataset behavior targets intact; aggregate metrics remain unimplemented.
 - Do not add dashboards, external eval frameworks, MLflow, pandas, LangSmith,
   or similar dependencies.
 - Reuse the production pipeline and keep the diff small and reviewable.

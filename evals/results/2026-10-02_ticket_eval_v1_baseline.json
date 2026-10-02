@@ -1,0 +1,3158 @@
+{
+  "metadata": {
+    "run_id": "2026-10-02_ticket_eval_v1_baseline",
+    "system_version": "1.0.0",
+    "dataset_version": "ticket_eval_v1",
+    "prompt_version": "1",
+    "model": "gpt-5.6-luna",
+    "git_commit": "5be859be3b90ee16e1cc4614d8e075270c745b8d",
+    "timestamp": "2026-10-02T15:43:14.797293Z"
+  },
+  "metrics": {},
+  "by_tag": {},
+  "cases": [
+    {
+      "id": "new_full_lavadora_001",
+      "input": "Hola, soy Ana Ruiz. Vivo en la calle Mayor 12, Villahermosa. La lavadora no enciende.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Ana Ruiz",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "calle Mayor 12, Villahermosa",
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Straightforward NEW case with all core fields present.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_missing_address_002",
+      "input": "Soy Paco. El frigorífico no enfría desde ayer.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Paco",
+                "appliance": "frigorífico"
+              },
+              "assert": {
+                "address": null,
+                "failure": "no enfría",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Missing address must remain missing; the model should not invent one.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_missing_name_003",
+      "input": "La tele no se ve bien. Es en la calle Feria 8, Villahermosa.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "appliance": "televisión",
+                "address": "calle Feria 8, Villahermosa"
+              },
+              "assert": {
+                "name": null,
+                "failure": "no se ve bien",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Missing customer name. The system should preserve the missing value instead of hallucinating a name.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_appliance_alias_tele_004",
+      "input": "Soy Luisa, de la calle Agua 3. La tele no enciende.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Luisa",
+                "appliance": "televisión"
+              },
+              "assert": {
+                "address": "calle Agua 3",
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Tests canonicalization of colloquial appliance name 'tele' to the canonical television category.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_failure_semantic_005",
+      "input": "Manolo, en Villahermosa. La lavadora termina pero la ropa sale empapada.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Manolo",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "failure": "no centrifuga",
+                "address": "Villahermosa",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Semantic failure classification: 'ropa sale empapada' should map to the canonical no-centrifuga failure.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_fridge_semantic_failure_006",
+      "input": "Soy Isabel, de Fuenllana. El frigorífico funciona y hace ruido, pero la comida está caliente.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Isabel",
+                "appliance": "frigorífico"
+              },
+              "assert": {
+                "failure": "no enfría",
+                "address": "Fuenllana",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Semantic failure classification without the customer explicitly saying 'no enfría'.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_antenna_007",
+      "input": "Buenas, soy Jesús, calle Real 4 en Montiel. No tengo señal en la tele y creo que es la antena.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Jesús",
+                "appliance": "antena"
+              },
+              "assert": {
+                "address": "calle Real 4, Montiel",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Customer mentions television but identifies the antenna as the likely device needing work.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_repeated_information_008",
+      "input": "Soy Carmen, Carmen. De la calle Mayor 7, la del siete. La lavadora no enciende, no enciende nada.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Carmen",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "calle Mayor 7",
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Repeated words and information should not create duplicated or corrupted field values.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_typo_colloquial_009",
+      "input": "Soy Javi d Villahermosa, la labadora me tira agua por abajo.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Javi",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "Villahermosa",
+                "failure": "pierde agua",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Typos and colloquial wording: 'labadora' and 'me tira agua por abajo'.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_irrelevant_detail_mixed_010",
+      "input": "Soy Rosa, calle Nueva 11 en Almedina. La lavadora no centrifuga. Por cierto, por las mañanas no estoy porque trabajo.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Rosa",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "calle Nueva 11, Almedina",
+                "failure": "no centrifuga",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Relevant extraction mixed with scheduling/irrelevant detail. The useful ticket fields must remain correct.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_address_correction_011",
+      "input": "Soy Pedro. Es en la calle Mayor 12... perdón, me he liado, calle Agua 12, en Villahermosa. La lavadora pierde agua.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Pedro",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "calle Agua 12, Villahermosa",
+                "failure": "pierde agua",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Later correction must override the earlier street, not concatenate both addresses.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_town_correction_012",
+      "input": "Soy Alicia. Vivo en Montiel... bueno no, perdona, en Almedina. El frigorífico no enfría.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Alicia",
+                "appliance": "frigorífico"
+              },
+              "assert": {
+                "address": "Almedina",
+                "failure": "no enfría",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Later town correction should replace the first location.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_name_correction_013",
+      "input": "Soy Pedro... bueno, el aviso no es para mí, es para mi madre María. Vive en la calle Sol 5 y su lavadora no enciende.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "María",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "calle Sol 5",
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "The first personal name is not the customer; the later correction identifies the actual customer.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_failure_correction_014",
+      "input": "Soy Andrés. La lavadora no enciende... no, encender sí enciende; lo que no hace es centrifugar.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Andrés",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "failure": "no centrifuga",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Negation/correction: do not keep the first failure after the customer explicitly retracts it.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_false_start_address_015",
+      "input": "Calle del Agua... espera, eso era antes. Ahora estoy en calle Empedrada 9, Villahermosa. Soy Tomás, la tele no se ve bien.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Tomás",
+                "appliance": "televisión"
+              },
+              "assert": {
+                "address": "calle Empedrada 9, Villahermosa",
+                "failure": "no se ve bien",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "False start at the beginning of the message. Only the corrected current address should be persisted.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_multiple_repetitions_correction_016",
+      "input": "María, María la del estanco. Es la tele, la tele. En calle Real 2... dos no, el 3, calle Real 3. No se ve bien.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "María la del estanco",
+                "appliance": "televisión"
+              },
+              "assert": {
+                "address": "calle Real 3",
+                "failure": "no se ve bien",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Combines alias-like name, repetition and an address correction.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_alias_relative_address_017",
+      "input": "Soy María la del estanco. La lavadora pierde agua. Vivo enfrente de la panadería de Costal, en Villahermosa.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "María la del estanco",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "enfrente de la panadería de Costal, Villahermosa",
+                "failure": "pierde agua",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Relative rural address must remain usable text; 'Costal' is part of the address reference, not the customer name.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_relative_person_reference_018",
+      "input": "Soy Julián. Estoy al lado de Pedro el de los Palotes, en la calle del Agua. El frigorífico no enfría.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Julián",
+                "appliance": "frigorífico"
+              },
+              "assert": {
+                "address": "al lado de Pedro el de los Palotes, calle del Agua",
+                "failure": "no enfría",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "'Pedro el de los Palotes' is a landmark/person reference inside the address, not the customer.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_family_alias_019",
+      "input": "Soy el hijo de la Sacra, de Villahermosa. La lavadora no centrifuga.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "el hijo de la Sacra",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "Villahermosa",
+                "failure": "no centrifuga",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Customer is identified only by a local family alias. Preserve it rather than inventing a formal name.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_town_colloquial_ossa_020",
+      "input": "Soy Antonio, de la Ossa. La lavadora pierde agua.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Antonio",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "Ossa de Montiel",
+                "failure": "pierde agua",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Future target: normalize colloquial 'de la Ossa' to Ossa de Montiel. Expected to fail until locality normalization exists.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_town_partial_fuenllana_021",
+      "input": "Paco, el de Fuenllana. El frigorífico no enfría.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Paco",
+                "appliance": "frigorífico"
+              },
+              "assert": {
+                "address": "Fuenllana",
+                "failure": "no enfría",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Town information is embedded in a colloquial identity phrase.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_town_only_albaladejo_022",
+      "input": "Soy Elena. Estoy en Albaladejo, no tengo calle porque ya sabéis dónde vivo. La tele no enciende.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Elena",
+                "appliance": "televisión"
+              },
+              "assert": {
+                "address": "Albaladejo",
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Only town is available. A future address/town split could model this better, but the current address field should retain the town.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_town_manzanares_023",
+      "input": "Soy Laura, de Manzanares. El aire acondicionado no enciende.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Laura",
+                "appliance": "aire acondicionado"
+              },
+              "assert": {
+                "address": "Manzanares",
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Cross-town case to ensure the system does not assume Villahermosa by default.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_unique_address_024",
+      "input": "Soy Ana, la de la lavadora. La dirección correcta es calle Mayor 12, no el 10.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Ana",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "calle Mayor 12, Villahermosa",
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Ana",
+              "appliance": "lavadora",
+              "address": "calle Mayor 10, Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Unique UPDATE correcting a persisted field.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Ana",
+            "appliance": "lavadora",
+            "address": "calle Mayor 10, Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_unique_failure_025",
+      "input": "Paco, lo de la lavadora: al final sí enciende, lo que pasa es que no centrifuga.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Paco",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "failure": "no centrifuga",
+                "address": "Fuenllana",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Paco",
+              "appliance": "lavadora",
+              "address": "Fuenllana",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "UPDATE with explicit correction of the previously stored failure.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Paco",
+            "appliance": "lavadora",
+            "address": "Fuenllana",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_unique_relative_address_026",
+      "input": "Rosa, la de la tele. Apunta que vivo enfrente de la panadería de Costal.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Rosa",
+                "appliance": "televisión"
+              },
+              "assert": {
+                "address": "enfrente de la panadería de Costal",
+                "failure": "no se ve bien",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Rosa",
+              "appliance": "televisión",
+              "address": null,
+              "failure": "no se ve bien",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Adds a relative address to an existing uniquely identifiable ticket.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Rosa",
+            "appliance": "televisión",
+            "address": null,
+            "failure": "no se ve bien",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_unique_add_detail_027",
+      "input": "Luis, el del frigorífico de Montiel. También hace un ruido fuerte por detrás.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Luis",
+                "appliance": "frigorífico"
+              },
+              "assert": {
+                "failure": "no enfría",
+                "address": "Montiel",
+                "other_details": "También hace un ruido fuerte por detrás.",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Luis",
+              "appliance": "frigorífico",
+              "address": "Montiel",
+              "failure": "no enfría",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Preserves the main failure while adding useful secondary information.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Luis",
+            "appliance": "frigorífico",
+            "address": "Montiel",
+            "failure": "no enfría",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_unique_colloquial_reference_028",
+      "input": "María la del estanco. Lo de la lavadora ahora pierde mucha más agua.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "María la del estanco",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "failure": "pierde agua",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "María la del estanco",
+              "appliance": "lavadora",
+              "address": "Villahermosa",
+              "failure": "pierde agua",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Existing alias-like customer identity should resolve a unique ticket.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "María la del estanco",
+            "appliance": "lavadora",
+            "address": "Villahermosa",
+            "failure": "pierde agua",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_unique_town_clue_029",
+      "input": "Juan, el de la Ossa, lo de la lavadora: ahora tampoco enciende.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Juan",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "Ossa de Montiel",
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Juan",
+              "appliance": "lavadora",
+              "address": "Ossa de Montiel",
+              "failure": "no centrifuga",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Future target: use colloquial town clue 'de la Ossa' when resolving an existing ticket.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Juan",
+            "appliance": "lavadora",
+            "address": "Ossa de Montiel",
+            "failure": "no centrifuga",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_no_candidate_030",
+      "input": "Soy Ramón, cambia lo de mi lavadora: la dirección es calle Sol 2.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "resolution_required"
+        },
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "UPDATE references a ticket that does not exist. The system must not create a new ticket silently.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_multiple_same_name_appliance_031",
+      "input": "Soy Pedro, cambia lo de la lavadora: ahora sí enciende.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "resolution_required"
+        },
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "match": {
+                "name": "Pedro",
+                "address": "calle Agua 4, Villahermosa"
+              },
+              "assert": {
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            },
+            {
+              "match": {
+                "name": "Pedro",
+                "address": "calle Real 9, Montiel"
+              },
+              "assert": {
+                "failure": "pierde agua",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Pedro",
+              "appliance": "lavadora",
+              "address": "calle Agua 4, Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            },
+            {
+              "id": 2,
+              "name": "Pedro",
+              "appliance": "lavadora",
+              "address": "calle Real 9, Montiel",
+              "failure": "pierde agua",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Two valid candidates. No ticket should be modified without additional evidence.",
+      "initial_database": {
+        "ticket_count": 2,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Pedro",
+            "appliance": "lavadora",
+            "address": "calle Agua 4, Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          },
+          {
+            "id": 2,
+            "name": "Pedro",
+            "appliance": "lavadora",
+            "address": "calle Real 9, Montiel",
+            "failure": "pierde agua",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_town_disambiguates_future_032",
+      "input": "Pedro, el de la Ossa. Lo de la lavadora ya no pierde agua, ahora no centrifuga.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "match": {
+                "name": "Pedro",
+                "address": "Ossa de Montiel"
+              },
+              "assert": {
+                "failure": "no centrifuga",
+                "state": "ACTIVE"
+              }
+            },
+            {
+              "match": {
+                "name": "Pedro",
+                "address": "Villahermosa"
+              },
+              "assert": {
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Pedro",
+              "appliance": "lavadora",
+              "address": "Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            },
+            {
+              "id": 2,
+              "name": "Pedro",
+              "appliance": "lavadora",
+              "address": "Ossa de Montiel",
+              "failure": "pierde agua",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Future target expected to fail today: colloquial locality should disambiguate the Ossa de Montiel ticket.",
+      "initial_database": {
+        "ticket_count": 2,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Pedro",
+            "appliance": "lavadora",
+            "address": "Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          },
+          {
+            "id": 2,
+            "name": "Pedro",
+            "appliance": "lavadora",
+            "address": "Ossa de Montiel",
+            "failure": "pierde agua",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_alias_disambiguates_future_033",
+      "input": "Soy Pedro Maturras. Lo de la lavadora ahora no centrifuga.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "match": {
+                "name": "Pedro García",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "failure": "no centrifuga",
+                "state": "ACTIVE"
+              }
+            },
+            {
+              "match": {
+                "name": "Pedro López",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "failure": "pierde agua",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Pedro García",
+              "appliance": "lavadora",
+              "address": "Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            },
+            {
+              "id": 2,
+              "name": "Pedro López",
+              "appliance": "lavadora",
+              "address": "Villahermosa",
+              "failure": "pierde agua",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Future target expected to fail today: an alias/contact mapping should associate 'Pedro Maturras' with Pedro García.",
+      "initial_database": {
+        "ticket_count": 2,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Pedro García",
+            "appliance": "lavadora",
+            "address": "Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          },
+          {
+            "id": 2,
+            "name": "Pedro López",
+            "appliance": "lavadora",
+            "address": "Villahermosa",
+            "failure": "pierde agua",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_duplicate_semantic_candidates_034",
+      "input": "María, lo de la lavadora: mañana no estoy.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "resolution_required"
+        },
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "match": {
+                "name": "María",
+                "other_details": "Pierde agua por debajo."
+              },
+              "assert": {
+                "state": "ACTIVE"
+              }
+            },
+            {
+              "match": {
+                "name": "María",
+                "other_details": "Sale agua por la parte de abajo."
+              },
+              "assert": {
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "María",
+              "appliance": "lavadora",
+              "address": "calle Real 3",
+              "failure": "pierde agua",
+              "other_details": "Pierde agua por debajo.",
+              "state": "ACTIVE"
+            },
+            {
+              "id": 2,
+              "name": "María",
+              "appliance": "lavadora",
+              "address": "calle Real 3",
+              "failure": "pierde agua",
+              "other_details": "Sale agua por la parte de abajo.",
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Represents two duplicate NEW notices originally described with different wording. Candidate resolution must not arbitrarily choose the first.",
+      "initial_database": {
+        "ticket_count": 2,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "María",
+            "appliance": "lavadora",
+            "address": "calle Real 3",
+            "failure": "pierde agua",
+            "other_details": "Pierde agua por debajo.",
+            "state": "ACTIVE"
+          },
+          {
+            "id": 2,
+            "name": "María",
+            "appliance": "lavadora",
+            "address": "calle Real 3",
+            "failure": "pierde agua",
+            "other_details": "Sale agua por la parte de abajo.",
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_appliance_disambiguates_035",
+      "input": "Lucía. Lo de la tele ahora directamente no enciende.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "match": {
+                "name": "Lucía",
+                "appliance": "televisión"
+              },
+              "assert": {
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            },
+            {
+              "match": {
+                "name": "Lucía",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Lucía",
+              "appliance": "lavadora",
+              "address": "Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            },
+            {
+              "id": 2,
+              "name": "Lucía",
+              "appliance": "televisión",
+              "address": "Villahermosa",
+              "failure": "no se ve bien",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Multiple tickets for one customer, but the appliance should uniquely resolve the target.",
+      "initial_database": {
+        "ticket_count": 2,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Lucía",
+            "appliance": "lavadora",
+            "address": "Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          },
+          {
+            "id": 2,
+            "name": "Lucía",
+            "appliance": "televisión",
+            "address": "Villahermosa",
+            "failure": "no se ve bien",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_vague_multiple_customer_tickets_036",
+      "input": "Lucía. Lo de casa sigue igual, no ha mejorado nada.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "resolution_required"
+        },
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "match": {
+                "name": "Lucía",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "state": "ACTIVE"
+              }
+            },
+            {
+              "match": {
+                "name": "Lucía",
+                "appliance": "televisión"
+              },
+              "assert": {
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Lucía",
+              "appliance": "lavadora",
+              "address": "Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            },
+            {
+              "id": 2,
+              "name": "Lucía",
+              "appliance": "televisión",
+              "address": "Villahermosa",
+              "failure": "no se ve bien",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Insufficient information to know which of the customer's two tickets is being referenced.",
+      "initial_database": {
+        "ticket_count": 2,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Lucía",
+            "appliance": "lavadora",
+            "address": "Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          },
+          {
+            "id": 2,
+            "name": "Lucía",
+            "appliance": "televisión",
+            "address": "Villahermosa",
+            "failure": "no se ve bien",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "cancel_unique_explicit_037",
+      "input": "Ana, la de la lavadora. Cancela el aviso, ya no hace falta que vengáis.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_cancelled"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Ana",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "state": "CANCELLED"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Ana",
+              "appliance": "lavadora",
+              "address": "Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Straightforward explicit cancellation.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Ana",
+            "appliance": "lavadora",
+            "address": "Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "cancel_unique_colloquial_038",
+      "input": "Miguel, el del frigorífico. No vengáis al final, ya lo he arreglado.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_cancelled"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Miguel",
+                "appliance": "frigorífico"
+              },
+              "assert": {
+                "state": "CANCELLED"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Miguel",
+              "appliance": "frigorífico",
+              "address": "Montiel",
+              "failure": "no enfría",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Cancellation expressed without the word 'cancelar'.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Miguel",
+            "appliance": "frigorífico",
+            "address": "Montiel",
+            "failure": "no enfría",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "cancel_no_candidate_039",
+      "input": "Soy Teresa, cancelad lo de mi televisión.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "resolution_required"
+        },
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Cancellation target does not exist. Must not create or cancel anything.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "cancel_multiple_candidates_040",
+      "input": "José. Cancelad lo de la lavadora.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "resolution_required"
+        },
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "match": {
+                "name": "José",
+                "address": "Villahermosa"
+              },
+              "assert": {
+                "state": "ACTIVE"
+              }
+            },
+            {
+              "match": {
+                "name": "José",
+                "address": "Almedina"
+              },
+              "assert": {
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "José",
+              "appliance": "lavadora",
+              "address": "Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            },
+            {
+              "id": 2,
+              "name": "José",
+              "appliance": "lavadora",
+              "address": "Almedina",
+              "failure": "pierde agua",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Ambiguous cancellation. A wrong automatic cancellation is more costly than asking for resolution.",
+      "initial_database": {
+        "ticket_count": 2,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "José",
+            "appliance": "lavadora",
+            "address": "Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          },
+          {
+            "id": 2,
+            "name": "José",
+            "appliance": "lavadora",
+            "address": "Almedina",
+            "failure": "pierde agua",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "cancel_town_disambiguates_future_041",
+      "input": "José, el de la Ossa. Cancelad lo de la lavadora.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_cancelled"
+        },
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "match": {
+                "name": "José",
+                "address": "Ossa de Montiel"
+              },
+              "assert": {
+                "state": "CANCELLED"
+              }
+            },
+            {
+              "match": {
+                "name": "José",
+                "address": "Villahermosa"
+              },
+              "assert": {
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "José",
+              "appliance": "lavadora",
+              "address": "Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            },
+            {
+              "id": 2,
+              "name": "José",
+              "appliance": "lavadora",
+              "address": "Ossa de Montiel",
+              "failure": "pierde agua",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Future target expected to fail today: locality clue should resolve the correct cancellation candidate.",
+      "initial_database": {
+        "ticket_count": 2,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "José",
+            "appliance": "lavadora",
+            "address": "Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          },
+          {
+            "id": 2,
+            "name": "José",
+            "appliance": "lavadora",
+            "address": "Ossa de Montiel",
+            "failure": "pierde agua",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "cancel_alias_disambiguates_future_042",
+      "input": "María la del estanco. Cancelad lo de la tele.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_cancelled"
+        },
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "match": {
+                "name": "María García",
+                "appliance": "televisión"
+              },
+              "assert": {
+                "state": "CANCELLED"
+              }
+            },
+            {
+              "match": {
+                "name": "María López",
+                "appliance": "televisión"
+              },
+              "assert": {
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "María García",
+              "appliance": "televisión",
+              "address": "Villahermosa",
+              "failure": "no se ve bien",
+              "other_details": null,
+              "state": "ACTIVE"
+            },
+            {
+              "id": 2,
+              "name": "María López",
+              "appliance": "televisión",
+              "address": "Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Future target expected to fail today: alias mapping should associate 'María la del estanco' with María García.",
+      "initial_database": {
+        "ticket_count": 2,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "María García",
+            "appliance": "televisión",
+            "address": "Villahermosa",
+            "failure": "no se ve bien",
+            "other_details": null,
+            "state": "ACTIVE"
+          },
+          {
+            "id": 2,
+            "name": "María López",
+            "appliance": "televisión",
+            "address": "Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_waiting_043",
+      "input": "Pedro, lo de la lavadora. Mañana no puedo; dejadlo de momento y ya os digo algo.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Pedro",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "state": "WAITING"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Pedro",
+              "appliance": "lavadora",
+              "address": "Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Separates message action from ticket lifecycle state: this should pause/wait rather than permanently cancel.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Pedro",
+            "appliance": "lavadora",
+            "address": "Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "resume_waiting_future_044",
+      "input": "Pedro, el de la lavadora. Ya podéis venir cuando queráis.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Pedro",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Pedro",
+              "appliance": "lavadora",
+              "address": "Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "SUSPENDED"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Future target: reactivate a WAITING ticket. Expected to expose whether the current implementation can resume work.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Pedro",
+            "appliance": "lavadora",
+            "address": "Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "SUSPENDED"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "resume_cancelled_future_045",
+      "input": "Carmen, la del frigorífico. Al final sí quiero que vengáis, sigue sin enfriar.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Carmen",
+                "appliance": "frigorífico"
+              },
+              "assert": {
+                "state": "ACTIVE",
+                "failure": "no enfría"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Carmen",
+              "appliance": "frigorífico",
+              "address": "Fuenllana",
+              "failure": "no enfría",
+              "other_details": null,
+              "state": "CANCELLED"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Future target expected to fail today: re-open an explicitly cancelled ticket instead of creating a duplicate.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Carmen",
+            "appliance": "frigorífico",
+            "address": "Fuenllana",
+            "failure": "no enfría",
+            "other_details": null,
+            "state": "CANCELLED"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_after_old_cancelled_different_problem_046",
+      "input": "Soy Carmen de Fuenllana. Tengo otro problema con la lavadora: ahora pierde agua.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "match": {
+                "name": "Carmen",
+                "failure": "no centrifuga"
+              },
+              "assert": {
+                "state": "CANCELLED"
+              }
+            },
+            {
+              "match": {
+                "name": "Carmen",
+                "failure": "pierde agua"
+              },
+              "assert": {
+                "state": "ACTIVE",
+                "appliance": "lavadora"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Carmen",
+              "appliance": "lavadora",
+              "address": "Fuenllana",
+              "failure": "no centrifuga",
+              "other_details": null,
+              "state": "CANCELLED"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "A genuinely new problem after an old cancelled notice should create a new ticket rather than resurrect the old one.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Carmen",
+            "appliance": "lavadora",
+            "address": "Fuenllana",
+            "failure": "no centrifuga",
+            "other_details": null,
+            "state": "CANCELLED"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "irrelevant_wrong_message_047",
+      "input": "Perdona, me he equivocado de número.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "resolution_required"
+        },
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Safe abstention: no actionable repair request exists and no ticket should be created.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "irrelevant_social_message_048",
+      "input": "Oye César, que soy yo, a ver cuándo te pasas por aquí.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "resolution_required"
+        },
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Social/non-repair message. Useful future review/debug case; the system must not invent an appliance or repair.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "irrelevant_thanks_existing_ticket_049",
+      "input": "Gracias, ya hablamos.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "resolution_required"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Raúl",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Raúl",
+              "appliance": "lavadora",
+              "address": "Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Irrelevant acknowledgement must not accidentally mutate the only existing ticket.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Raúl",
+            "appliance": "lavadora",
+            "address": "Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_multiple_appliances_future_050",
+      "input": "Soy Marta, calle Real 6 de Villahermosa. La lavadora no centrifuga y además la tele no enciende.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "match": {
+                "name": "Marta",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "calle Real 6, Villahermosa",
+                "failure": "no centrifuga",
+                "state": "ACTIVE"
+              }
+            },
+            {
+              "match": {
+                "name": "Marta",
+                "appliance": "televisión"
+              },
+              "assert": {
+                "address": "calle Real 6, Villahermosa",
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Future target expected to fail today if the pipeline only supports one ticket per message: one message contains two independent repair notices.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "duplicate_new_detection_future_051",
+      "input": "Soy Sonia, de calle Agua 8. La lavadora está soltando agua por la parte de abajo cuando la pongo.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "resolution_required"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Sonia",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "failure": "pierde agua",
+                "address": "calle Agua 8, Villahermosa",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Sonia",
+              "appliance": "lavadora",
+              "address": "calle Agua 8, Villahermosa",
+              "failure": "pierde agua",
+              "other_details": "Pierde agua por debajo al lavar.",
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Future target: detect that a semantically equivalent NEW message is probably a duplicate instead of blindly creating a second ticket.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Sonia",
+            "appliance": "lavadora",
+            "address": "calle Agua 8, Villahermosa",
+            "failure": "pierde agua",
+            "other_details": "Pierde agua por debajo al lavar.",
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_person_reference_not_customer_052",
+      "input": "Soy Alberto. Vivo al lado de María la del estanco, en Villahermosa. El frigorífico no enfría.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Alberto",
+                "appliance": "frigorífico"
+              },
+              "assert": {
+                "address": "al lado de María la del estanco, Villahermosa",
+                "failure": "no enfría",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Named person inside a relative address must not overwrite the actual customer name.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_correction_inside_message_053",
+      "input": "Laura, la de la tele. Ahora no se ve nada... bueno, sí se ve, perdona, lo que pasa es que se apaga sola.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Laura",
+                "appliance": "televisión"
+              },
+              "assert": {
+                "address": "Manzanares",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Laura",
+              "appliance": "televisión",
+              "address": "Manzanares",
+              "failure": "no se ve bien",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Self-correction inside an UPDATE. The system should not persist the explicitly retracted 'no se ve nada' claim. Exact failure mapping may need alignment with the canonical failure taxonomy.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Laura",
+            "appliance": "televisión",
+            "address": "Manzanares",
+            "failure": "no se ve bien",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "new_ambiguous_name_vs_address_054",
+      "input": "Soy Pedro. Estoy enfrente de María la del estanco, en la calle Agua. La lavadora no enciende.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_added"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Pedro",
+                "appliance": "lavadora"
+              },
+              "assert": {
+                "address": "enfrente de María la del estanco, calle Agua",
+                "failure": "no enciende",
+                "state": "ACTIVE"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 0,
+          "tickets": []
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Separates customer identity from a second named person used as an address landmark.",
+      "initial_database": {
+        "ticket_count": 0,
+        "tickets": []
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "update_same_name_different_town_exact_clue_055",
+      "input": "Ángel, el de Albaladejo. El frigorífico ahora tampoco hace ruido.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "ticket_updated"
+        },
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "match": {
+                "name": "Ángel",
+                "address": "Albaladejo"
+              },
+              "assert": {
+                "state": "ACTIVE"
+              }
+            },
+            {
+              "match": {
+                "name": "Ángel",
+                "address": "Villahermosa"
+              },
+              "assert": {
+                "state": "ACTIVE",
+                "failure": "no enfría"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 2,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Ángel",
+              "appliance": "frigorífico",
+              "address": "Villahermosa",
+              "failure": "no enfría",
+              "other_details": null,
+              "state": "ACTIVE"
+            },
+            {
+              "id": 2,
+              "name": "Ángel",
+              "appliance": "frigorífico",
+              "address": "Albaladejo",
+              "failure": "no enfría",
+              "other_details": null,
+              "state": "ACTIVE"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Town should be usable as a candidate-resolution clue even when name, appliance and original failure are identical.",
+      "initial_database": {
+        "ticket_count": 2,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Ángel",
+            "appliance": "frigorífico",
+            "address": "Villahermosa",
+            "failure": "no enfría",
+            "other_details": null,
+            "state": "ACTIVE"
+          },
+          {
+            "id": 2,
+            "name": "Ángel",
+            "appliance": "frigorífico",
+            "address": "Albaladejo",
+            "failure": "no enfría",
+            "other_details": null,
+            "state": "ACTIVE"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    },
+    {
+      "id": "cancel_completed_ticket_056",
+      "input": "Nuria, cancela lo de la tele.",
+      "expected": {
+        "response": {
+          "status": "ok",
+          "data": "resolution_required"
+        },
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "match": {
+                "name": "Nuria",
+                "appliance": "televisión"
+              },
+              "assert": {
+                "state": "COMPLETED"
+              }
+            }
+          ]
+        }
+      },
+      "actual": {
+        "response": null,
+        "database": {
+          "ticket_count": 1,
+          "tickets": [
+            {
+              "id": 1,
+              "name": "Nuria",
+              "appliance": "televisión",
+              "address": "Villahermosa",
+              "failure": "no enciende",
+              "other_details": null,
+              "state": "COMPLETED"
+            }
+          ]
+        }
+      },
+      "passed": false,
+      "errors": [
+        "APIConnectionError: Connection error."
+      ],
+      "notes": "Lifecycle guard: a completed ticket should not silently transition to cancelled without an explicit supported business rule.",
+      "initial_database": {
+        "ticket_count": 1,
+        "tickets": [
+          {
+            "id": 1,
+            "name": "Nuria",
+            "appliance": "televisión",
+            "address": "Villahermosa",
+            "failure": "no enciende",
+            "other_details": null,
+            "state": "COMPLETED"
+          }
+        ]
+      },
+      "source": "C:\\Users\\cesar\\source\\repos\\AITicketAssistant\\evals\\datasets\\tickets\\ticket_eval_v1\\dataset.jsonl"
+    }
+  ]
+}

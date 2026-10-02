@@ -4,7 +4,6 @@ from backend.domain.task_info import TaskInfo
 from backend.domain.ticket import TicketStatus
 from evals.runner import load_dataset
 
-
 INFO_FIELDS = set(TaskInfo.model_fields)
 TICKET_FIELDS = INFO_FIELDS | {"id", "state"}
 

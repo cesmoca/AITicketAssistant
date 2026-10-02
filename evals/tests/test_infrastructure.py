@@ -6,9 +6,9 @@ import pytest
 
 from backend.domain.task_info import TaskInfo
 from backend.domain.ticket_action import TicketAction, TicketActionType
+from evals import run_eval
 from evals.assertions import compare_case
 from evals.loader import load_cases, validate_case
-from evals import run_eval
 
 
 @pytest.fixture(autouse=True)
