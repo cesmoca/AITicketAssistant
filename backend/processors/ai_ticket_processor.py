@@ -7,13 +7,10 @@ from .ticket_processor import ProcessTicketRequest, ProcessTicketResult, TicketP
 
 
 class AITicketProcessor(TicketProcessor):
-
-
     def __init__(self, repository, ticket_ai):
 
         self.repository = repository
         self.ticket_ai = ticket_ai
-
 
     def process_ticket(self, request: ProcessTicketRequest) -> ProcessTicketResult:
 
@@ -23,8 +20,8 @@ class AITicketProcessor(TicketProcessor):
 
         if ticket_action.action_type == "new":
             ticket = self.repository.create(TicketMapper.to_new_ticket(ticket_action))
-            return ProcessTicketResult(status="ok",data="Ticket added", result=ticket)
-        
+            return ProcessTicketResult(status="ok", data="Ticket added", result=ticket)
+
         elif ticket_action.action_type == "update":
             candidates = self.repository.searchTicket(ticket_action)
 
@@ -32,10 +29,14 @@ class AITicketProcessor(TicketProcessor):
                 ticket = candidates[0]
                 self._applyActionTicket(ticket_action, ticket)
                 self.repository.update(ticket)
-                return ProcessTicketResult(status="resolution_required", result=ticket)
+                return ProcessTicketResult(
+                    status="error", data="resolution_required", result=ticket
+                )
 
             else:
-                return ProcessTicketResult(status="resolution_required", result=None)
+                return ProcessTicketResult(
+                    status="error", data="resolution_required", result=ticket
+                )
 
         elif ticket_action.action_type == "cancel":
             candidates = self.repository.searchTicket(ticket_action)
@@ -43,11 +44,13 @@ class AITicketProcessor(TicketProcessor):
             if len(candidates) == 1:
                 ticket = candidates[0]
                 self.repository.delete(ticket.id)
-                return ProcessTicketResult(status="resolution_required", result=ticket)
+                return ProcessTicketResult(
+                    status="error", data="resolution_required", result=ticket
+                )
 
             else:
                 return ProcessTicketResult(
-                    status="resolution_required", data=None, result=None
+                    status="error", data="resolution_required", result=ticket
                 )
 
         else:
@@ -69,6 +72,6 @@ class AITicketProcessor(TicketProcessor):
 
         if ticketAction.info.failure is not None:
             ticket.info.failure = ticketAction.info.failure
-            
+
         if ticketAction.info.other_details is not None:
             ticket.info.other_details = ticketAction.info.other_details
