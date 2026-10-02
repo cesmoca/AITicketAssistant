@@ -4,11 +4,16 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
-from backend.constants import MODEL, SYSTEM_PROMPT
 from backend.processors.ticket_processor import ProcessTicketRequest
 from backend.remote.openai_ticket_ai import OpenAITicketAI
 from backend.remote.ticket_ai import TicketAI
 from version import PROMPT_VERSION, SYSTEM_VERSION
+
+
+def get_configuration() -> tuple[str, str]:
+    from backend.constants.constants import MODEL, SYSTEM_PROMPT
+
+    return MODEL, SYSTEM_PROMPT
 
 
 def load_dataset(path: Path) -> list[dict]:
@@ -51,6 +56,7 @@ def run_cases(cases: list[dict], parser: TicketAI) -> list[dict]:
 
 
 def build_metadata(dataset_version: str, run_id: str | None = None) -> dict:
+    model, _ = get_configuration()
     started_at = datetime.now(timezone.utc)
     repository_root = Path(__file__).resolve().parents[1]
     try:
@@ -66,7 +72,7 @@ def build_metadata(dataset_version: str, run_id: str | None = None) -> dict:
         "system_version": SYSTEM_VERSION,
         "dataset_version": dataset_version,
         "prompt_version": PROMPT_VERSION,
-        "model": MODEL,
+        "model": model,
         "git_commit": commit,
         "timestamp": started_at.isoformat().replace("+00:00", "Z"),
     }
@@ -96,7 +102,8 @@ def main() -> None:
 
     cases = load_dataset(args.dataset)
     metadata = build_metadata(args.dataset_version, args.run_id)
-    parser = OpenAITicketAI(instructions=SYSTEM_PROMPT, model=MODEL)
+    model, instructions = get_configuration()
+    parser = OpenAITicketAI(instructions=instructions, model=model)
     results = run_cases(cases, parser)
     save_results(results, metadata, args.output)
     print(f"Saved {len(results)} results to {args.output}")

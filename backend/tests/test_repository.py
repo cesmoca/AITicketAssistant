@@ -211,8 +211,8 @@ def test_processor_maps_actions_to_persisted_tickets(repository, ticket):
                       failure="Changed failure", other_details="Changed details"),
     )
     updated = processor.process_ticket(ProcessTicketRequest(text="Update ticket"))
-    assert updated.data is None
-    assert updated.status == "resolution_required"
+    assert updated.data == "resolution_required"
+    assert updated.status == "error"
     assert updated.result.id == created.result.id
     assert updated.result.status == created.result.status
     assert updated.result.info.appliance == ticket.info.appliance
@@ -224,8 +224,8 @@ def test_processor_maps_actions_to_persisted_tickets(repository, ticket):
 
     ai.test_ticket = TicketAction(info=updated.result.info.model_copy(), action_type=TicketActionType.CANCEL)
     cancelled = processor.process_ticket(ProcessTicketRequest(text="Cancel ticket"))
-    assert cancelled.data is None
-    assert cancelled.status == "resolution_required"
+    assert cancelled.data == "resolution_required"
+    assert cancelled.status == "error"
     assert cancelled.result == updated.result
     assert repository.get(created.result.id) is None
 
@@ -238,4 +238,4 @@ def test_delete_without_ticket(repository):
 def test_delete_without_id(repository, ticket):
     ticket.id = None
     with pytest.raises(ValueError, match="valid ticket_id"):
-        repository.delete(ticket)
+        repository.delete(ticket.id)

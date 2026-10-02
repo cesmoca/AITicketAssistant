@@ -27,7 +27,7 @@ class TicketRepository(ABC):
         pass
     
     @abstractmethod
-    def delete(self, ticket: Ticket) -> bool:
+    def delete(self, ticket_id: int) -> bool:
         pass
     
     @abstractmethod

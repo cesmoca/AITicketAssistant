@@ -1,6 +1,4 @@
-MODEL = "gpt-5.6-luna"
-
-FAILURES_LIST = """No enciende
+FAILURES_LIST_V2 = """No enciende
 No se apaga
 Se apaga solo
 Se reinicia
@@ -59,7 +57,7 @@ Da corriente
 Tiene una pieza rota o suelta
 """
 
-APPLIANCES_LIS="""
+APPLIANCES_LIST_V2="""
 Televisión
 TDT
 Antena
@@ -123,7 +121,7 @@ Proyector
 Otro
 """
 
-SYSTEM_PROMPT = f"""Haz como si fueras un asistente para un reparador
+SYSTEM_PROMPT_V2 = f"""Haz como si fueras un asistente para un reparador
                de electrodomesticos y necesitas sacar la informacion
                clave de los avisos de reparacion a partir de la
                llamada de un cliente. 
@@ -158,11 +156,11 @@ SYSTEM_PROMPT = f"""Haz como si fueras un asistente para un reparador
                
                Para la descripción del fallo, manda únicamente un fallo
                de esta lista, y si no hay ningún candidato claro, escribe
-               "Avería desconocida": {FAILURES_LIST}.
+               "Avería desconocida": {FAILURES_LIST_V2}.
                
                Para la appliance muestra también el campo que más se ajuste
                a esta lista. Si no hay ningún candidato claro, escribe "Otro".
-               Esta es la lista:{APPLIANCES_LIS}.
+               Esta es la lista:{APPLIANCES_LIST_V2}.
                
                Si hay información extra que no hayas podido reflejar en ninguno
                de estos cambios porque ha habido que descartarla, y crees

@@ -37,12 +37,10 @@ class FakeTicketRepository(TicketRepository):
                 and ticket.info.address.strip().lower() == candidate.info.address.strip().lower())
         ]
 
-    def delete(self, ticket: Ticket) -> bool:
-        if ticket is None:
-            raise ValueError("Delete should have a valid ticket")
-        if ticket.id is None:
+    def delete(self, ticket_id: int) -> bool:
+        if ticket_id is None:
             raise ValueError("Delete should have a valid ticket_id")
-        return self.tickets.pop(ticket.id, None) is not None
+        return self.tickets.pop(ticket_id, None) is not None
 
     def clear(self):
         self.tickets.clear()

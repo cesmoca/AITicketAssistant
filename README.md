@@ -213,13 +213,13 @@ npm run preview
 
 ## Testing
 
-Run the backend tests from the repository root with the project interpreter:
+Run the deterministic backend and evaluation infrastructure tests from the repository root with the project interpreter:
 
 ```powershell
-backend\.venv\Scripts\python.exe -m pytest backend\tests
+backend\.venv\Scripts\python.exe -m pytest backend/tests evals/tests --ignore=backend/tests/test_ai_ticket_ai.py -q
 ```
 
-The tests use fakes for external AI and persistence dependencies, which keeps processor behavior testable without requiring a live API request or a production database.
+These tests use fakes or mocked AI responses and isolated databases. The command excludes the live AI extraction tests, whose output depends on the model.
 
 ### AI evaluation cases
 
@@ -243,6 +243,51 @@ backend\.venv\Scripts\python.exe -m pytest backend\tests\test_ai_ticket_ai.py -s
 ```
 
 The AI evaluation calls the configured OpenAI model, so it requires `OPENAI_API_KEY`, network access, and may incur API usage. The fake-based tests do not require those external resources.
+
+### Evaluation runner infrastructure
+
+`evals/runner.py` loads JSONL cases, calls the existing production AI parser,
+and records the input, expected output, and actual parsed `TicketAction`.
+It does not execute repository operations or modify the application database.
+No JSONL datasets or aggregate metrics are included yet.
+
+From the repository root:
+
+```powershell
+backend\.venv\Scripts\python.exe -m evals.runner <dataset.jsonl> --dataset-version ticket_eval_v1 --run-id 2026-10-02_baseline --output evals/results/2026-10-02_baseline.json
+```
+
+The results JSON contains `metadata`, `metrics`, `by_tag`, and `cases`. Metadata
+records the run ID, system and prompt versions from `version.py`, dataset
+version, configured model, Git commit, and UTC timestamp. Metrics and tag
+summaries are currently empty; case-level pass/fail checks are available in the workflow runner.
+Datasets and result files can be committed to Git, using a separate result file
+for each run and a separate directory for each dataset version.
+
+`evals/run_eval.py` evaluates the complete production flow: each case declares
+initial tickets in `setup.tickets`, an `input`, and expected response and final
+database assertions. Each case gets a new SQLite database in memory, reusing the
+production processor, parser, repository, and models. Ticket matching must locate
+exactly one ticket, and only explicitly asserted fields are checked.
+
+```powershell
+backend\.venv\Scripts\python.exe evals/run_eval.py
+backend\.venv\Scripts\python.exe evals/run_eval.py --case update_ambiguous_same_name_001
+backend\.venv\Scripts\python.exe evals/run_eval.py --case update_ambiguous_same_name_001 --verbose
+backend\.venv\Scripts\python.exe evals/run_eval.py --list
+backend\.venv\Scripts\python.exe -m pytest evals/tests -q
+```
+
+The default dataset source is `evals/datasets/`, searched recursively; a JSONL
+file or directory can also be passed explicitly. No datasets are included yet.
+Workflow results print PASS/FAIL, include field-level diagnostics, and are saved
+as `evals/results/<run_id>.json`. Failures produce a non-zero exit code. Full runs
+continue after exceptions while printing their tracebacks; `--case` lets original
+exceptions propagate for debugging. `--list` calls neither AI nor the database.
+Aggregate metrics remain unimplemented.
+
+See [the evaluation README](evals/README.md) for both runners, versioning,
+case schema, matching rules, and exception handling.
 
 ## Reproducible demo
 
@@ -331,7 +376,7 @@ This is a focused portfolio and learning project, not a production deployment. N
 
 ### What I would do differently next
 
-- Add a dedicated evaluation runner with stable fixtures, recorded model outputs, and field-level scoring.
+- Add evaluation datasets for the isolated workflow runner; add aggregate metrics in a later stage.
 - Validate and version the AI contract at runtime rather than trusting external JSON implicitly.
 - Add timestamps and explicit ticket history before implementing production ordering or audit requirements.
 - Move configuration and secrets into a settings layer, add migrations, and replace bulk deletion with an authenticated, confirmed operation.

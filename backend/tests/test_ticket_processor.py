@@ -47,14 +47,24 @@ def test_process_ticket(processor: AITicketProcessor, ticket_ai, repository):
 
 
 @pytest.mark.parametrize("action_type", [TicketActionType.UPDATE, TicketActionType.CANCEL])
-def test_resolution_required_has_null_data(processor, ticket_ai, action_type):
+@pytest.mark.parametrize("candidate_count", [0, 2])
+def test_resolution_required_has_null_result(processor, ticket_ai, repository, action_type, candidate_count):
+    from backend.domain.ticket import TicketStatus
+
+    for _ in range(candidate_count):
+        repository.create(Ticket(
+            id=None,
+            info=TaskInfo(name="Name", appliance=None, address=None, failure=None, other_details=None),
+            status=TicketStatus.ACTIVE,
+        ))
     ticket_ai.test_ticket = TicketAction(
         action_type=action_type,
-        info=TaskInfo(name=None, appliance=None, address=None, failure=None, other_details=None),
+        info=TaskInfo(name="Name", appliance=None, address=None, failure=None, other_details=None),
     )
     request = ProcessTicketRequest(text="Ambiguous ticket")
     result = processor.process_ticket(request)
 
     assert ticket_ai.last_request is request
-    assert result.data is None
-    assert result.model_dump() == {"status": "resolution_required", "data": None, "result": None}
+    assert result.data == "resolution_required"
+    assert result.model_dump() == {"status": "error", "data": "resolution_required", "result": None}
+    assert len(repository.list()) == candidate_count

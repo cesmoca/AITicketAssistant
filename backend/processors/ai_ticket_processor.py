@@ -35,7 +35,7 @@ class AITicketProcessor(TicketProcessor):
 
             else:
                 return ProcessTicketResult(
-                    status="error", data="resolution_required", result=ticket
+                    status="error", data="resolution_required", result=None
                 )
 
         elif ticket_action.action_type == "cancel":
@@ -50,7 +50,7 @@ class AITicketProcessor(TicketProcessor):
 
             else:
                 return ProcessTicketResult(
-                    status="error", data="resolution_required", result=ticket
+                    status="error", data="resolution_required", result=None
                 )
 
         else:
