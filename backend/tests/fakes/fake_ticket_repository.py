@@ -10,6 +10,9 @@ class FakeTicketRepository(TicketRepository):
     def create(self, ticket: Ticket) -> Ticket:
         if not isinstance(ticket, Ticket):
             raise TypeError("create expects Ticket")
+        if ticket.id is not None:
+            raise ValueError("Cannot create a Ticket that already has an ID")
+        ticket = ticket.model_copy(update={"id": max(self.tickets, default=0) + 1})
         self.tickets[ticket.id] = ticket
         return ticket
 
@@ -34,8 +37,12 @@ class FakeTicketRepository(TicketRepository):
                 and ticket.info.address.strip().lower() == candidate.info.address.strip().lower())
         ]
 
-    def delete(self, ticket_id: int) -> bool:
-        return self.tickets.pop(ticket_id, None) is not None
+    def delete(self, ticket: Ticket) -> bool:
+        if ticket is None:
+            raise ValueError("Delete should have a valid ticket")
+        if ticket.id is None:
+            raise ValueError("Delete should have a valid ticket_id")
+        return self.tickets.pop(ticket.id, None) is not None
 
     def clear(self):
         self.tickets.clear()

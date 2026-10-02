@@ -14,7 +14,7 @@ class TicketRepository(ABC):
     def update(self, ticket: Ticket) -> Ticket:
         pass
 
-    @abstractmethod    
+    @abstractmethod
     def get(self, id: int) -> Ticket | None:
         pass
 
@@ -27,7 +27,7 @@ class TicketRepository(ABC):
         pass
     
     @abstractmethod
-    def delete(self, ticket_id: int) -> bool:
+    def delete(self, ticket: Ticket) -> bool:
         pass
     
     @abstractmethod

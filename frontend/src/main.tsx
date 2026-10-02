@@ -71,15 +71,11 @@ function App() {
   const [ticketsList, setTicketsList] = useState<Ticket[]>([]);
 
   async function handleSendClick() {
-    const response = await processTicket(text);
-
-    if (response.status === "ok") {
-      setResult(response.result === null ? "â€”" : JSON.stringify(response.result, null, 2));
-      return;
-    }
-
-    if (response.status === "resolution_required") {
-      setResult(response.status);
+    try {
+      const response = await processTicket(text);
+      setResult(JSON.stringify(response, null, 2));
+    } catch (error) {
+      setResult(error instanceof Error ? error.message : "Error procesando la tarea");
     }
   };
 
@@ -165,12 +161,12 @@ function App() {
         </div>
         {ticketsList.map((ticket) => (
             <div className="ticket-row" role="row" key={ticket.id}>
-              <span role="cell" data-label="Date">â€”</span>
-              <span role="cell" data-label="Name">{ticket.info.name ?? "â€”"}</span>
-              <span role="cell" data-label="Appliance">{ticket.info.appliance ?? "â€”"}</span>
-              <span role="cell" data-label="Address">{ticket.info.address ?? "â€”"}</span>
-              <span role="cell" data-label="Failure">{ticket.info.failure ?? "â€”"}</span>
-              <span role="cell" data-label="Other Details">{ticket.info.other_details ?? "â€”"}</span>
+              <span role="cell" data-label="Date">&mdash;</span>
+              <span role="cell" data-label="Name">{ticket.info.name ?? "\u2014"}</span>
+              <span role="cell" data-label="Appliance">{ticket.info.appliance ?? "\u2014"}</span>
+              <span role="cell" data-label="Address">{ticket.info.address ?? "\u2014"}</span>
+              <span role="cell" data-label="Failure">{ticket.info.failure ?? "\u2014"}</span>
+              <span role="cell" data-label="Other Details">{ticket.info.other_details ?? "\u2014"}</span>
               <span role="cell" data-label="Status">
                 <span className="status-badge status-badge--muted">{ticket.status}</span>
               </span>

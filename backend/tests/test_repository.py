@@ -184,3 +184,55 @@ def test_create_from_action(repository, ticket):
     assert stored.id == 1
     assert stored.info == action.info
     assert stored.status == TicketStatus.ACTIVE
+
+
+
+def test_processor_maps_actions_to_persisted_tickets(repository, ticket):
+    from backend.domain.ticket_action import TicketAction, TicketActionType
+    from backend.processors.ai_ticket_processor import AITicketProcessor
+    from backend.processors.ticket_processor import ProcessTicketRequest
+    from backend.tests.fakes.fake_ticket_ai import FakeTicketAI
+
+    ai = FakeTicketAI()
+    processor = AITicketProcessor(repository, ai)
+    ai.test_ticket = TicketAction(info=ticket.info.model_copy(), action_type=TicketActionType.NEW)
+    created = processor.process_ticket(ProcessTicketRequest(text="Create ticket"))
+    assert created.status == "ok"
+    assert isinstance(created.result, Ticket)
+    assert created.result.id is not None
+    assert created.result.info == ticket.info
+    assert created.result.status == TicketStatus.ACTIVE
+    assert repository.get(created.result.id) == created.result
+
+    ai.test_ticket = TicketAction(
+        action_type=TicketActionType.UPDATE,
+        info=TaskInfo(name=ticket.info.name, appliance=None, address=None,
+                      failure="Changed failure", other_details="Changed details"),
+    )
+    updated = processor.process_ticket(ProcessTicketRequest(text="Update ticket"))
+    assert updated.status == "resolution_required"
+    assert updated.result.id == created.result.id
+    assert updated.result.status == created.result.status
+    assert updated.result.info.appliance == ticket.info.appliance
+    assert updated.result.info.address == ticket.info.address
+    assert updated.result.info.failure == "Changed failure"
+    assert updated.result.info.other_details == "Changed details"
+    assert repository.get(created.result.id) == updated.result
+    assert "id" not in ai.test_ticket.model_dump()
+
+    ai.test_ticket = TicketAction(info=updated.result.info.model_copy(), action_type=TicketActionType.CANCEL)
+    cancelled = processor.process_ticket(ProcessTicketRequest(text="Cancel ticket"))
+    assert cancelled.status == "resolution_required"
+    assert cancelled.result == updated.result
+    assert repository.get(created.result.id) is None
+
+
+def test_delete_without_ticket(repository):
+    with pytest.raises(ValueError, match="valid ticket"):
+        repository.delete(None)
+
+
+def test_delete_without_id(repository, ticket):
+    ticket.id = None
+    with pytest.raises(ValueError, match="valid ticket_id"):
+        repository.delete(ticket)
