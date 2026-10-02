@@ -197,6 +197,7 @@ def test_processor_maps_actions_to_persisted_tickets(repository, ticket):
     processor = AITicketProcessor(repository, ai)
     ai.test_ticket = TicketAction(info=ticket.info.model_copy(), action_type=TicketActionType.NEW)
     created = processor.process_ticket(ProcessTicketRequest(text="Create ticket"))
+    assert created.data == "Ticket added"
     assert created.status == "ok"
     assert isinstance(created.result, Ticket)
     assert created.result.id is not None
@@ -210,6 +211,7 @@ def test_processor_maps_actions_to_persisted_tickets(repository, ticket):
                       failure="Changed failure", other_details="Changed details"),
     )
     updated = processor.process_ticket(ProcessTicketRequest(text="Update ticket"))
+    assert updated.data is None
     assert updated.status == "resolution_required"
     assert updated.result.id == created.result.id
     assert updated.result.status == created.result.status
@@ -222,6 +224,7 @@ def test_processor_maps_actions_to_persisted_tickets(repository, ticket):
 
     ai.test_ticket = TicketAction(info=updated.result.info.model_copy(), action_type=TicketActionType.CANCEL)
     cancelled = processor.process_ticket(ProcessTicketRequest(text="Cancel ticket"))
+    assert cancelled.data is None
     assert cancelled.status == "resolution_required"
     assert cancelled.result == updated.result
     assert repository.get(created.result.id) is None

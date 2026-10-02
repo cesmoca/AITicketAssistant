@@ -23,7 +23,7 @@ class AITicketProcessor(TicketProcessor):
 
         if ticket_action.action_type == "new":
             ticket = self.repository.create(TicketMapper.to_new_ticket(ticket_action))
-            return ProcessTicketResult(status="Ticket added", result=ticket)
+            return ProcessTicketResult(status="ok",data="Ticket added", result=ticket)
         
         elif ticket_action.action_type == "update":
             candidates = self.repository.searchTicket(ticket_action)
@@ -58,14 +58,17 @@ class AITicketProcessor(TicketProcessor):
 
     def _applyActionTicket(self, ticketAction: TicketAction, ticket: Ticket):
 
-        if ticketAction.info.name is None:
-            ticketAction.info.name = ticket.info.name
+        if ticketAction.info.name is not None:
+            ticket.info.name = ticketAction.info.name
 
-        if ticketAction.info.appliance is None:
-            ticketAction.info.appliance = ticket.info.appliance
+        if ticketAction.info.appliance is not None:
+            ticket.info.appliance = ticketAction.info.appliance
 
-        if ticketAction.info.address is None:
-            ticketAction.info.address = ticket.info.address
+        if ticketAction.info.address is not None:
+            ticket.info.address = ticketAction.info.address
 
-        if ticketAction.info.failure is None:
-            ticketAction.info.failure = ticket.info.failure
+        if ticketAction.info.failure is not None:
+            ticket.info.failure = ticketAction.info.failure
+            
+        if ticketAction.info.other_details is not None:
+            ticket.info.other_details = ticketAction.info.other_details

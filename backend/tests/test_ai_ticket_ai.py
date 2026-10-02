@@ -15,19 +15,15 @@ def normalize(value: str | None) -> str | None:
 
 
 @pytest.fixture
-
 def ticket_ai():
 
     return OpenAITicketAI(SYSTEM_PROMPT, model=MODEL)
 
 
-
 @pytest.mark.parametrize("case", cases)
-
 def test_ticket_ai(ticket_ai, case):
     ticket_action = ticket_ai.request_ai(ProcessTicketRequest(text=case["input"]))
     assert isinstance(ticket_action, TicketAction)
-
 
     print("> TICKET ANSWER")
     pprint(ticket_action.model_dump_json(indent=2))
@@ -35,16 +31,14 @@ def test_ticket_ai(ticket_ai, case):
     print("> CASE")
     pprint(case)
 
-
     assert normalize(ticket_action.info.name) == normalize(case["expected_name"])
 
     assert normalize(ticket_action.info.address) == normalize(case["expected_address"])
 
-    assert normalize(ticket_action.info.appliance) == normalize(case["expected_appliance"])
+    assert normalize(ticket_action.info.appliance) == normalize(
+        case["expected_appliance"]
+    )
 
     assert normalize(ticket_action.info.failure) == normalize(case["expected_failure"])
 
     assert normalize(ticket_action.action_type) == normalize(case["expected_type"])
-
-
-

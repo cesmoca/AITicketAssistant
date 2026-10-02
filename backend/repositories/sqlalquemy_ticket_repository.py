@@ -70,16 +70,13 @@ class SQLAlchemyTicketRepository(TicketRepository):
         ]
         return candidate_tickets
 
-    def delete(self, ticket: Ticket) -> bool:
+    def delete(self, ticket_id: int) -> bool:
 
-        if ticket is None:
-            raise ValueError("Delete should have a valid ticket")
-
-        if ticket.id is None:
+        if ticket_id is None:
             raise ValueError("Delete should have a valid ticket_id")
 
         with self.session_factory() as session:
-            ticket = session.get(TicketEntity, ticket.id)
+            ticket = session.get(TicketEntity, ticket_id)
 
             if ticket is None:
                 return False

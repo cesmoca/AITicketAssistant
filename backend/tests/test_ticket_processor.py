@@ -39,7 +39,7 @@ def test_process_ticket(processor: AITicketProcessor, ticket_ai, repository):
 
     assert ticket_ai.last_request is request
     assert result.status == "ok"
-    assert result.data is None
+    assert result.data == "Ticket added"
 
     assert isinstance(result.result, Ticket)
     assert result.result.info.name == ticket_ai.test_ticket.info.name
@@ -56,4 +56,5 @@ def test_resolution_required_has_null_data(processor, ticket_ai, action_type):
     result = processor.process_ticket(request)
 
     assert ticket_ai.last_request is request
+    assert result.data is None
     assert result.model_dump() == {"status": "resolution_required", "data": None, "result": None}
